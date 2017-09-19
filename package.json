@@ -1,0 +1,61 @@
+{
+  "name": "redux-pixies",
+  "version": "0.1.0",
+  "description": "The magical asynchronous Redux library",
+  "license": "MIT",
+  "keywords": [
+    "asynchronous",
+    "declarative",
+    "react",
+    "redux",
+    "side-effects"
+  ],
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "lib/*",
+    "package.json"
+  ],
+  "main": "lib/redux-pixies.js",
+  "module": "lib/redux-pixies.es.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Airbitz/redux-pixies.git"
+  },
+  "scripts": {
+    "build": "rollup -c && flow-copy-source src lib",
+    "build:test": "rollup -c rollup.config.test.js",
+    "flow": "flow status",
+    "format": "prettier --write '*.js' 'src/**/*.js' 'test/**/*.js' && eslint --fix '*.js' 'src/**/*.js' 'test/**/*.js'",
+    "lint": "eslint '*.js' 'src/**/*.js' 'test/**/*.js'",
+    "precommit": "npm run lint && npm run build",
+    "prepare": "npm run build",
+    "pretest": "npm run lint && npm run build:test",
+    "test": "mocha --require source-map-support/register build/tests.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-flow": "^6.23.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.6.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-flowtype": "^2.35.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "flow-bin": "^0.54.1",
+    "flow-copy-source": "^1.2.1",
+    "flow-typed": "^2.1.5",
+    "husky": "^0.14.3",
+    "mocha": "^3.5.0",
+    "redux": "^3.7.2",
+    "rollup": "^0.49.2",
+    "rollup-plugin-babel": "^3.0.2",
+    "source-map-support": "^0.4.17"
+  },
+  "dependencies": {}
+}
