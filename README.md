@@ -65,7 +65,7 @@ function FetchPixie (props) { ... }
 
 Sometime pixies create resources that they would like to share with others. For example, one pixie might maintain a [`Disklet`](https://www.npmjs.com/package/disklet) folder that other need to access.
 
-To do this, a pixie can call `props.onOutput` at any time to share some data. The other pixies can then find this output in their `props`.
+To do this, a pixie can call `callbacks.onOutput` at any time to share some data. The other pixies can then find this output in their `props`.
 
 ## Combining pixies
 
@@ -78,7 +78,7 @@ const BossPixie = combinePixies({
 })
 ```
 
-If any of the pixies have output, it will be available in `props.output`. So, if the login pixie in this example calls `props.onOutput`, the seach pixie can see that data as `props.output.login`.
+If any of the pixies have output, it will be available in `props.output`. So, if the login pixie in this example calls `callbacks.onOutput`, the seach pixie can see that data as `props.output.login`.
 
 ## Filtering props
 
@@ -115,13 +115,13 @@ const ChatListPixie = mapPixie(
 
 ## Reporting errors
 
-Pixies can encounter errors at any time, since they are allowed to do asynchronous things like setting up timers. To report these asynchronous errors, pixies should call `props.onError`. This will shut the pixie down cleanly and allow any parent pixies to respond appropriately.
+Pixies can encounter errors at any time, since they are allowed to do asynchronous things like setting up timers. To report these asynchronous errors, pixies should call `callbacks.onError`. This will shut the pixie down cleanly and allow any parent pixies to respond appropriately.
 
 All of the following conditions will cleanly destroy the failed pixie and trigger the nearest error handler passed to `mapPixie` or `wrapPixie`:
 
 * Throwing an exception from `constructor`, `update`, or `destructor`
 * Returning a rejected promise from `update`
-* Calling `props.onError`
+* Calling `callbacks.onError`
 
 ## Starting pixies
 
