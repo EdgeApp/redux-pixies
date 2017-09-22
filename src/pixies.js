@@ -37,7 +37,6 @@ export class Pixie<P, C = any> {
   props: P
   context: C
 
-  /* eslint-disable no-useless-constructor */
   constructor (props: P, context: C) {
     this.props = props
     this.context = context
@@ -45,12 +44,11 @@ export class Pixie<P, C = any> {
 
   /**
    * Called every time the props change.
-   * @param {*} props Information passed in from the parent worker.
    */
   update (props: P, context: C): Promise<any> | void {}
 
   /**
-   * Called before the worker is destroyed.
+   * Called before the pixie is destroyed.
    * This is a great place to clean up any resources.
    */
   destructor (props: P, context: C) {}
