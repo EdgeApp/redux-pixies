@@ -205,20 +205,17 @@ function updatePixie (pixieNode: PixieNode<any>) {
     instance.props = props
     instance.context = context
     try {
-      const thenable = instance.update(props, context)
-      if (thenable && typeof thenable.then === 'function') {
-        thenable.then(
-          success => {
-            pixieNode.updating = false
-            pixieNode.clean = true
-            updatePixie(pixieNode)
-            return void 0
-          },
-          e => pixieError(pixieNode, e)
-        )
-      } else {
+      const onDone = () => {
         pixieNode.updating = false
         pixieNode.clean = true
+        updatePixie(pixieNode)
+      }
+
+      const thenable = instance.update(props, context)
+      if (thenable && typeof thenable.then === 'function') {
+        thenable.then(onDone, e => pixieError(pixieNode, e))
+      } else {
+        onDone()
       }
     } catch (e) {
       pixieError(pixieNode, e)
@@ -228,6 +225,8 @@ function updatePixie (pixieNode: PixieNode<any>) {
 
 /**
  * Destroys a pixie node instance.
+ * It is safe to call this on any pixieNode,
+ * including pixieNodes that have already been destroyed.
  */
 function destroyPixie (pixieNode: PixieNode<any>) {
   for (const child of pixieNode.children) {
