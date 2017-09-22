@@ -33,45 +33,41 @@ type PixieChildren = PixieChild<any> | Array<PixieChild<any>>
 /**
  * Class-style pixies should inherit from this type.
  */
-export class Pixie<P, C = any> {
+export class Pixie<P> {
   props: P
-  context: C
 
-  constructor (props: P, context: C) {
+  constructor (props: P) {
     this.props = props
-    this.context = context
   }
 
   /**
    * Called every time the props change.
    */
-  update (props: P, context: C): Promise<any> | void {}
+  update (props: P): Promise<any> | void {}
 
   /**
    * Called before the pixie is destroyed.
    * This is a great place to clean up any resources.
    */
-  destructor (props: P, context: C) {}
+  destructor (props: P) {}
 
   /**
    * Reconfigures the Pixie's children,
    * starting, stopping, and updating them as needed.
    */
-  updateChildren (children: PixieChildren, context?: C) {
+  updateChildren (children: PixieChildren) {
     updateChildren(
       this._internalPixieNode,
-      Array.isArray(children) ? children : [children],
-      context
+      Array.isArray(children) ? children : [children]
     )
   }
 
-  _internalPixieNode: PixieNode<P, C>
+  _internalPixieNode: PixieNode<P>
 }
 
-interface PixieNode<P, C = any> {
+interface PixieNode<P> {
   PixieType: Function,
   props: P,
-  context: C,
 
   // Instance management:
   children: Array<PixieNode<any> | void>,
@@ -86,10 +82,8 @@ interface PixieNode<P, C = any> {
  */
 function updateChildren (
   pixieNode: PixieNode<any>,
-  children: Array<PixieChild<any>>,
-  context: any
+  children: Array<PixieChild<any>>
 ) {
-  if (!context) context = pixieNode.context
   const oldChildren = pixieNode.children
 
   // First, index the existing children for faster lookup:
@@ -145,7 +139,6 @@ function updateChildren (
       newChildren.push({
         PixieType,
         props,
-        context,
         parent: pixieNode,
         children: []
       })
@@ -179,10 +172,10 @@ function wrapFunctionalPixie (PixieType: Function) {
 function activatePixie (pixieNode: PixieNode<any>) {
   if (!pixieNode.instance) {
     try {
-      const { PixieType, props, context } = pixieNode
+      const { PixieType, props } = pixieNode
       pixieNode.instance =
         PixieType.prototype instanceof Pixie
-          ? new PixieType(props, context)
+          ? new PixieType(props)
           : wrapFunctionalPixie(PixieType)
 
       pixieNode.instance._internalPixieNode = pixieNode
@@ -199,11 +192,10 @@ function activatePixie (pixieNode: PixieNode<any>) {
  */
 function updatePixie (pixieNode: PixieNode<any>) {
   if (pixieNode.instance && !pixieNode.clean && !pixieNode.updating) {
-    const { props, context, instance } = pixieNode
+    const { props, instance } = pixieNode
 
     pixieNode.updating = true
     instance.props = props
-    instance.context = context
     try {
       const onDone = () => {
         pixieNode.updating = false
@@ -211,7 +203,7 @@ function updatePixie (pixieNode: PixieNode<any>) {
         updatePixie(pixieNode)
       }
 
-      const thenable = instance.update(props, context)
+      const thenable = instance.update(props)
       if (thenable && typeof thenable.then === 'function') {
         thenable.then(onDone, e => pixieError(pixieNode, e))
       } else {
@@ -234,11 +226,11 @@ function destroyPixie (pixieNode: PixieNode<any>) {
   }
   pixieNode.children = []
 
-  const { instance, props, context } = pixieNode
+  const { instance, props } = pixieNode
   if (instance) {
     try {
       pixieNode.instance = void 0
-      instance.destructor(props, context)
+      instance.destructor(props)
     } catch (e) {
       pixieError(pixieNode, e)
     }
@@ -268,12 +260,9 @@ export interface PixieTree<P> {
   destroy(): void
 }
 
-export function startPixie<P, C> (
-  pixieChild: PixieChild<P>,
-  context: C
-): PixieTree<P> {
+export function startPixie<P> (pixieChild: PixieChild<P>): PixieTree<P> {
   const { PixieType, props } = pixieChild
-  const pixieNode: PixieNode<any> = { PixieType, props, context, children: [] }
+  const pixieNode: PixieNode<any> = { PixieType, props, children: [] }
   activatePixie(pixieNode)
 
   return {
@@ -299,8 +288,7 @@ export function startPixie<P, C> (
  * @return An unsubscribe function.
  */
 export function attachPixie (PixieType: Function, store: Store<any, any>) {
-  const context = { dispatch: store.dispatch }
-  const instance = startPixie({ PixieType, props: store.getState() }, context)
+  const instance = startPixie({ PixieType, props: store.getState() })
 
   const unsubscribe = store.subscribe(() => {
     instance.setProps(store.getState())
