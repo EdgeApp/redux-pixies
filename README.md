@@ -17,10 +17,10 @@ import { attachPixie } from './pixies.js'
 // This code runs whenever the Redux state changes. The idea here is
 // to fetch search results any time the user is on the search page
 // but has no results.
-async function SearchPixie (props, context) {
-  if (props.onSearchPage && !props.hasSearchResults) {
-    const results = await fetchSearchResults(props.searchTerm)
-    context.dispatch({ type: 'SEARCH_FETCHED', payload: results })
+async function SearchPixie (props) {
+  if (props.state.onSearchPage && !props.state.hasSearchResults) {
+    const results = await fetchSearchResults(props.state.searchTerm)
+    props.dispatch({ type: 'SEARCH_FETCHED', payload: results })
   }
 }
 
@@ -36,55 +36,111 @@ A pixie is like a React component. Pixies have a very simple lifecycle, with onl
 * update
 * destructor
 
-All three methods recieve `props`, which change along with the app's state, and `context`, which contains non-changing things such as `dispatch`. The pixie's job is to examine the `props` and perform any work that needs to happen in response.
+All three methods recieve `props`, which change along with the app's state. The pixie's job is to examine the `props` and perform any work that needs to happen in response.
 
 The `update` method is where most of the work typically happens. It is called every time the props change (including the first time the pixie is started). If this method returns a promise, the runtime will wait for the promise to resolve before calling `update` again. This ensures that pixie won't accidentally start the same work twice.
 
 The `constructor` and `destructor` methods are called when the pixie is created or destroyed. Pixies can be destroyed at any time, even while their async `update` method is still running. The best response is to cancel whatever work `update` is currently doing, since it is no longer needed.
 
-## Children
-
-A pixie can create children at any time by calling `this.updateChildren`. This method accepts an array child descriptions, which are created using the `createPixie` function. If the parent pixie calls this method more than once, the library will compare the previous list with new list, starting, stopping, and updating children as needed. Destroying a parent pixie automatically destroys all its children.
-
-By default, child pixies will recieve the same `context` as their parents. To provide a different context, pass a context object as the last parameter to `this.updateChildren`. The context is not allowed to change, so `this.updateChildren` will ignore the context passed on any future calls.
-
-If a child throws an error in any of its lifecycle methods, the child will die. If the parent does not handle the error, the parent will die too. To prevent this, provide a `catch` function as one of the child's `props`. This will be called when the child dies from an error, giving the parent a chance to respond.
-
-If you are really clever, you can put `/** @jsx createPixie */` at the top of your file. Now you can use JSX to describe your child pixies:
-
-```js
-/** @jsx createPixie */
-
-function BossPixie (props) {
-  updateChildren([
-    <SearchPixie state={props.state} />,
-    <LoginPixie state={props.state} />
-  ])
-}
-```
 
 ## Defining pixies
+
+A normal pixie is an ES6 class with three methods:
+
+```js
+class FetchPixie extends Pixie {
+  constructor  (props) { ... }
+  async update (props) { ... }
+  destructor   (props) { ... }
+}
+```
 
 If the `constructor` and `destructor` aren't needed, a pixie can just be a bare `update` function:
 
 ```js
-function FetchPixie (props, context) { ... }
+function FetchPixie (props) { ... }
 ```
 
-Otherwise, a pixie is an ES6 class:
+## Sharing data
+
+Sometime pixies create resources that they would like to share with others. For example, one pixie might maintain a [`Disklet`](https://www.npmjs.com/package/disklet) folder that other need to access.
+
+To do this, a pixie can call `props.onOutput` at any time to share some data. The other pixies can then find this output in their `props`.
+
+## Combining pixies
+
+The `redux-pixies` library provides a `combinePixies` function. This function works a lot like the `combineReducers` function from Redux. It accepts an object where the keys are the names of each pixie, and the values are the pixie constructors.
 
 ```js
-class FetchPixie extends Pixie {
-  constructor  (props, context) { ... }
-  async update (props, context) { ... }
-  destructor   (props, context) { ... }
-}
+const BossPixie = combinePixies({
+  search: SearchPixie,
+  login: LoginPixie
+})
 ```
+
+If any of the pixies have output, it will be available in `props.output`. So, if the login pixie in this example calls `props.onOutput`, the seach pixie can see that data as `props.output.login`.
+
+## Filtering props
+
+The `redux-pixies` library provides a `wrapPixie` function, which makes it possible to customize the props going into a pixie:
+
+```js
+const FilteredPixie = wrapPixie(
+  SubsystemPixie,
+  props => ({ login: props.peers.login })
+  (error, props) => props.dispatch({ type: 'SUBSYSTEM_DIED' })
+})
+```
+
+In this example, the subsystem pixie recieves just the login object from the outside world; the other props are filtered out. If the sybsystem pixie encounters an error, the wrapper will catch it and dispatch an appropriate error action.
+
+## Replicating pixies
+
+For managing lists of things, `redux-pixies` provides a `mapPixie` function. This function creates a pixie for each item in a list of id's. As the id list changes, this function will automatically start and stop pixies in response.
+
+```js
+const ChatListPixie = mapPixie(
+  ChatPixie,
+
+  // Grabs the id list from the props:
+  props => props.state.activeChatIds,
+
+  // Filters the props going into the individual pixies:
+  (props, id) => ({ ...props, id }),
+
+  // Error handler:
+  (error, props) => props.dispatch({ type: 'CHAT_FAILED', payload: props.id })
+)
+```
+
+## Reporting errors
+
+Pixies can encounter errors at any time, since they are allowed to do asynchronous things like setting up timers. To report these asynchronous errors, pixies should call `props.onError`. This will shut the pixie down cleanly and allow any parent pixies to respond appropriately.
+
+All of the following conditions will cleanly destroy the failed pixie and trigger the nearest error handler passed to `mapPixie` or `wrapPixie`:
+
+* Throwing an exception from `constructor`, `update`, or `destructor`
+* Returning a rejected promise from `update`
+* Calling `props.onError`
 
 ## Starting pixies
 
-Use the `startPixie` function to create a Pixie instance. The function takes a pixie descriptor (from `createPixie`) and an optional `context`. The returned object has a `setProps` method and a `destroy` method.
+Use the `startPixie` function to actually create a Pixie instance. The function accepts a pixie constructor and an optional initial props object.
 
-To handle Redux in a more react-is way, use the `ReduxProvider` pixie to inject your redux store into the context, and then use `connectPixie` in the same way as the `connect` method of [react-redux](https://github.com/reactjs/react-redux).
+```js
+const pixieTree = startPixie(RootPixie, initialProps)
 
-If that seems like too much work, there is also an `attachPixie`, which combines all three operations (`createPixie`, `startPixie`, `ReduxProvider`, and `connectPixie`) in one operation.
+// To update the props:
+pixieTree.setProps(props)
+
+// To read the output:
+pixieTree.output
+
+// To subscribe to changes in the output:
+const unsubscribe = pixieTree.subscribe(output => {})
+
+// To shut everything down:
+pixieTree.destroy()
+```
+
+To hook the pixies up to your Redux store, use `attachPixie` instead. It accepts a redux store as its first parameter, but otherwise behaves the same as `startPixie`. The `state` and `dispatch` will be available to the pixie as props.
