@@ -1,5 +1,6 @@
 // @flow
 import { shallowCompare } from './compare.js'
+import { DumbMap } from './dumbMap.js'
 import type { Store } from 'redux'
 
 /**
@@ -262,27 +263,6 @@ function pixieError (pixieNode: PixieNode<any>, e: any) {
     }
   } else {
     if (parent) pixieError(parent, e)
-  }
-}
-
-/**
- * A very minimalistic ES6 `Map` ponyfill.
- */
-class DumbMap<K, V> {
-  table: Array<{ key: K, value: V }>
-
-  constructor () {
-    this.table = []
-  }
-
-  set (key: K, value: V) {
-    this.table.push({ key, value })
-  }
-
-  get (key: K): V | void {
-    for (let i = 0; i < this.table.length; ++i) {
-      if (this.table[i].key === key) return this.table[i].value
-    }
   }
 }
 
