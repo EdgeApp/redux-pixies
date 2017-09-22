@@ -78,7 +78,7 @@ interface PixieNode<P, C = any> {
   parent?: PixieNode<any>,
   instance?: Pixie<P>,
   updating?: boolean,
-  updated?: boolean
+  clean?: boolean
 }
 
 /**
@@ -136,7 +136,7 @@ function updateChildren (
       // Claim the node for our own use:
       newChildren.push(pixieNode)
       if (pixieNode.PixieType !== PixieType) destroyPixie(pixieNode)
-      if (!shallowCompare(pixieNode.props, props)) pixieNode.updated = false
+      if (!shallowCompare(pixieNode.props, props)) pixieNode.clean = false
       pixieNode.PixieType = PixieType
       pixieNode.props = props
       oldChildren[oldIndex] = void 0
@@ -198,7 +198,7 @@ function activatePixie (pixieNode: PixieNode<any>) {
  * Applies props to a pixie.
  */
 function updatePixie (pixieNode: PixieNode<any>) {
-  if (pixieNode.instance && !pixieNode.updating && !pixieNode.updated) {
+  if (pixieNode.instance && !pixieNode.clean && !pixieNode.updating) {
     const { props, context, instance } = pixieNode
 
     pixieNode.updating = true
@@ -210,7 +210,7 @@ function updatePixie (pixieNode: PixieNode<any>) {
         thenable.then(
           success => {
             pixieNode.updating = false
-            pixieNode.updated = true
+            pixieNode.clean = true
             updatePixie(pixieNode)
             return void 0
           },
@@ -218,7 +218,7 @@ function updatePixie (pixieNode: PixieNode<any>) {
         )
       } else {
         pixieNode.updating = false
-        pixieNode.updated = true
+        pixieNode.clean = true
       }
     } catch (e) {
       pixieError(pixieNode, e)
@@ -279,7 +279,7 @@ export function startPixie<P, C> (
 
   return {
     setProps (props: P) {
-      if (!shallowCompare(pixieNode.props, props)) pixieNode.updated = false
+      if (!shallowCompare(pixieNode.props, props)) pixieNode.clean = false
       pixieNode.props = props
       return updatePixie(pixieNode)
     },
