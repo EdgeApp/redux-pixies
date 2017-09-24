@@ -1,16 +1,20 @@
 // @flow
+import { attachPixie, mapPixie } from '../src/index.js'
 import { makeAssertLog } from './assertLog.js'
-import { attachPixie, createPixie, Pixie } from '../src/index.js'
-import { expect } from 'chai'
+import './catchPixieError.test.js'
+import './combinePixies.test.js'
+import './mapPixie.test.js'
+import './reflectPixieOutput.test.js'
+import './tamePixie.test.js'
+import './wrapPixie.test.js'
 import { describe, it } from 'mocha'
 import { createStore } from 'redux'
 
 type Action =
   | { type: 'UPDATE', payload: { id: string, value: string } }
   | { type: 'DELETE', payload: string }
-  | { type: '--other--' }
 
-function listReducer (state = {}, action: Action) {
+function reducer (state = {}, action: Action) {
   switch (action.type) {
     case 'UPDATE': {
       const { id, value } = action.payload
@@ -33,73 +37,53 @@ describe('pixies', function () {
     const log = makeAssertLog(true)
 
     // A worker with some logging side effects.
-    type ItemProps = { key: string, value: string }
-    class ItemWorker extends Pixie<ItemProps> {
-      key: string
+    interface ItemProps { id: string, value: string }
+    let itemCount = 0
+    function itemPixie () {
+      const index = itemCount++
+      log(`item pixie #${index} created`)
 
-      constructor (props: ItemProps) {
-        super(props)
-        log(`start ${props.key} = ${props.value}`)
-        this.key = props.key
-      }
-
-      update (props) {
-        expect(props.key).to.equal(this.key)
-        log(`update ${props.key} = ${props.value}`)
-      }
-
-      destructor (props) {
-        log(`stop ${props.key}`)
+      return {
+        update ({ id, value }: ItemProps) {
+          log(`item pixie #${index} updated ${id} = ${value}`)
+        },
+        destroy () {
+          log(`item pixie #${index} destroyed`)
+        }
       }
     }
 
     // A pure-function worker for creating & shutting down item workers.
-    function Manager (props: {}) {
-      this.updateChildren(
-        Object.keys(props).map(key =>
-          createPixie(ItemWorker, { key, value: props[key] })
-        )
-      )
-    }
+    interface ManagerProps { state: {} }
+    const managerPixie = mapPixie(
+      itemPixie,
+      (props: ManagerProps) => Object.keys(props.state),
+      (props: ManagerProps, id: string) => ({ id, value: props.state[id] })
+    )
 
     // The redux store:
-    const store = createStore(listReducer)
-    const cleanup = attachPixie(Manager, store)
+    const store = createStore(reducer)
+    const destroy = attachPixie(store, managerPixie)
 
     store.dispatch({ type: 'UPDATE', payload: { id: 'a', value: 'Hello' } })
     store.dispatch({ type: 'UPDATE', payload: { id: 'b', value: 'To' } })
     store.dispatch({ type: 'UPDATE', payload: { id: 'c', value: 'Workers' } })
     log.assert([
-      'start a = Hello',
-      'start b = To',
-      'start c = Workers',
-      'update a = Hello',
-      'update b = To',
-      'update c = Workers'
+      'item pixie #0 created',
+      'item pixie #1 created',
+      'item pixie #2 created',
+      'item pixie #0 updated a = Hello',
+      'item pixie #1 updated b = To',
+      'item pixie #2 updated c = Workers'
     ])
 
     store.dispatch({ type: 'DELETE', payload: 'b' })
-    log.assert(['stop b'])
+    log.assert(['item pixie #1 destroyed'])
 
     store.dispatch({ type: 'UPDATE', payload: { id: 'c', value: 'World' } })
-    log.assert(['update c = World'])
+    log.assert(['item pixie #2 updated c = World'])
 
-    cleanup()
-    log.assert(['stop a', 'stop c'])
-  })
-
-  it('ignores falsy pixies', function () {
-    const log = makeAssertLog(true)
-
-    function YupWorker () {
-      log('yup')
-    }
-    function ParentWorker () {
-      this.updateChildren([false, createPixie(YupWorker, {}), false])
-    }
-
-    const store = createStore(listReducer)
-    attachPixie(ParentWorker, store)()
-    log.assert(['yup'])
+    destroy()
+    log.assert(['item pixie #0 destroyed', 'item pixie #2 destroyed'])
   })
 })

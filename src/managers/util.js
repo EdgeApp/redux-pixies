@@ -1,4 +1,21 @@
 // @flow
+import type { OnError } from '../index.js'
+
+/**
+ * If the function throws, send that through `onError`.
+ */
+export function catchify<R> (
+  f: (...args: any) => R,
+  onError: OnError
+): (...args: any) => R | void {
+  return (...args: any) => {
+    try {
+      return f(...args)
+    } catch (e) {
+      onError(e)
+    }
+  }
+}
 
 /**
  * Returns true if two Javascript values are equal (non-recursively).
