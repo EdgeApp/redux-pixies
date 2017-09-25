@@ -196,6 +196,27 @@ const safePixie = catchPixieErrors(
 
 The `attachPixie` function automatically applies this function to its input, so the entire pixie tree will shut down by default if any pixie calls `onError`. Using this enhancer throughout your tree of pixies can limit a failed pixie's destruction to just the affected subsystem.
 
+### Subscribing to props changes
+
+If you pass a pixie through the `reflectPixieProps` enhancer, it will recieve several new functions:
+
+* `props.getProps()` - Returns the latest props.
+* `props.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
+* `props.pauseUntil(props => condition)` - Returns a promise that resolves when the provided condition is true, or rejects when the pixie is destroyed.
+
+This sort of thing is especially useful in detached situations like event handlers, which want access to the latest props, but aren't directly tied to the `update` function:
+
+```js
+patientPixie = reflectPixieProps(() => props => {
+  someLibrary.onEvent = () => {
+    // The original `props` is a frozen in time from when this callback
+    // was created, so use `getProps` to get the latest props:
+    const freshProps = props.getProps()
+    doSomething(freshProps)
+  }
+})
+```
+
 ### Wild vs. Tame Pixies
 
 There are actually two types of pixies - wild pixies and tame pixies. A wild pixie is the kind you write directly. It has the following behaviors and expectations:
