@@ -3,7 +3,7 @@ import { combinePixies, reflectPixieOutput } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
-describe('catchPixieError', function () {
+describe('combinePixies', function () {
   it('basic operation', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + JSON.stringify(data))
@@ -35,6 +35,7 @@ describe('catchPixieError', function () {
     instance.update({ x: 2 })
     instance.destroy()
     log.assert([
+      'output {}',
       'update 1 {"x":2}',
       'output {"testPixie1":1}',
       'update 2 {"x":2}',
@@ -77,9 +78,10 @@ describe('catchPixieError', function () {
     instance.update({ x: 2 })
     instance.destroy()
     log.assert([
-      'update 1 {"x":2}',
+      'output {}',
+      'update 1 {"x":2,"output":{}}',
       'output {"testPixie1":1}',
-      'update 2 {"x":2}',
+      'update 2 {"x":2,"output":{}}',
       'output {"testPixie1":1,"testPixie2":2}',
       'update 1 {"x":2,"output":{"testPixie1":1,"testPixie2":2}}',
       'update 2 {"x":2,"output":{"testPixie1":1,"testPixie2":2}}',

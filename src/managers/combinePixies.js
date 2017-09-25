@@ -18,6 +18,7 @@ export function combinePixies<P> (pixieMap: {
     const instances: { [id: string]: PixieInstance<P> } = {}
     let outputs: { [id: string]: any } = {}
     let destroyed: boolean = false
+    onOutput(outputs)
 
     for (const id of Object.keys(pixieMap)) {
       const onOutputInner = (data: any) => {
