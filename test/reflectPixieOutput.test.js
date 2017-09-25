@@ -4,7 +4,7 @@ import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
 describe('reflectPixieOutput', function () {
-  it('output during creation', async function () {
+  it('output during creation', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 
@@ -32,7 +32,7 @@ describe('reflectPixieOutput', function () {
     ])
   })
 
-  it('output during update', async function () {
+  it('output during update', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 
@@ -61,7 +61,7 @@ describe('reflectPixieOutput', function () {
     ])
   })
 
-  it('output during destruction', async function () {
+  it('output during destruction', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 

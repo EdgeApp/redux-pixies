@@ -4,7 +4,7 @@ import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
 describe('tamePixie', function () {
-  it('handles raw update functions', async function () {
+  it('handles raw update functions', function () {
     const log = makeAssertLog()
     const onError = e => log(e.message)
 

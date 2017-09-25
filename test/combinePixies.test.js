@@ -4,7 +4,7 @@ import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
 describe('catchPixieError', function () {
-  it('basic operation', async function () {
+  it('basic operation', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + JSON.stringify(data))
 
@@ -44,7 +44,7 @@ describe('catchPixieError', function () {
     ])
   })
 
-  it('with reflection', async function () {
+  it('with reflection', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + JSON.stringify(data))
 

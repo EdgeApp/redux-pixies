@@ -4,7 +4,7 @@ import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
 describe('wrapPixie', function () {
-  it('basic operation', async function () {
+  it('basic operation', function () {
     const log = makeAssertLog()
 
     const testPixie = () => {
