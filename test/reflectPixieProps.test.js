@@ -1,6 +1,6 @@
 // @flow
-import { reflectPixieProps } from '../src/index.js'
-import type { ReflectedProps } from '../src/index.js'
+import { reflectPixieProps } from '../src/redux-pixies.js'
+import type { ReflectedProps } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { expect } from 'chai'
 import { describe, it } from 'mocha'

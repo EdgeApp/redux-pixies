@@ -6,7 +6,7 @@ import type {
   TamePixie,
   UpdateFunction,
   WildPixie
-} from '../index.js'
+} from '../redux-pixies.js'
 
 /**
  * If a wild pixie returns a bare function, turn that into a proper object.

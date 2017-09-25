@@ -1,5 +1,5 @@
 // @flow
-import { tamePixie } from '../src/index.js'
+import { tamePixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 

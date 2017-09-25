@@ -1,5 +1,10 @@
 // @flow
-import type { OnError, OnOutput, TamePixie, WildPixie } from '../index.js'
+import type {
+  OnError,
+  OnOutput,
+  TamePixie,
+  WildPixie
+} from '../redux-pixies.js'
 import { tamePixie } from './tamePixie.js'
 
 export type Condition<P, R> = (props: P) => R | void

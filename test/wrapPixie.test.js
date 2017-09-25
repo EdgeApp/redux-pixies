@@ -1,5 +1,5 @@
 // @flow
-import { wrapPixie } from '../src/index.js'
+import { wrapPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 

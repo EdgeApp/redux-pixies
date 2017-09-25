@@ -1,5 +1,5 @@
 // @flow
-import { attachPixie, mapPixie } from '../src/index.js'
+import { attachPixie, mapPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import './catchPixieError.test.js'
 import './combinePixies.test.js'

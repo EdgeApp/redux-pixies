@@ -1,6 +1,6 @@
 // @flow
 import type { Store, Dispatch } from 'redux'
-import type { OnError, OnOutput, WildPixie } from '../index.js'
+import type { OnError, OnOutput, WildPixie } from '../redux-pixies.js'
 import { catchPixieError } from '../enhancers/catchPixieError.js'
 import { reflectPixieOutput } from '../enhancers/reflectPixieOutput.js'
 
