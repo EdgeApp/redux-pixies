@@ -2,12 +2,26 @@
 
 > The magical Redux side-effects library
 
-Pixies are little proceses that run in the background, monitoring your Redux store and handling asynchronous side-effects. Pixies are a lot like React components, but instead of managing the DOM, pixies manage everything else.
+[![npm downloads](https://img.shields.io/npm/dm/redux-pixies.svg?style=flat-square)](https://www.npmjs.com/package/redux-pixies)
+
+## Table of contents
+1. [Introduction](#introduction)
+2. [Example](#example)
+3. [Writing Pixies](#writing-pixies)
+4. [Managing pixies](#managing-pixies)
+5. [Testing pixies](#testing-pixies)
+6. [Pixie enhancers](#pixie-enhancers)
+7. [Implementation Details](#implementation-details)
+
+<a name="introduction"></a>
+## Introduction
+Pixies are little processes that run in the background, monitoring your Redux store and handling asynchronous side-effects. Pixies are a lot like React components, but instead of managing the DOM, pixies manage everything else.
 
 Pixies are state-based, rather than action-based. A pixie's job is to compare the state of the Redux store with the real world and fix anything that is out of sync. For example, a pixie might notice when the user is on a search page but has no search results, so it fetches results from the server in response. If the user leaves the search page before the results come in, the pixie can notice that too and cancel the request.
 
 This is much easier than action-based side-effect approaches like [redux-thunk](https://github.com/gaearon/redux-thunk) or [redux-saga](https://github.com/redux-saga/redux-saga). In the example above, no matter what Redux actions cause the user to enter the search page, the pixie will always notice the missing results and perform the fetch. With the traditional approach, the programmer must manually wire side effects into any action that might enter or leave the search page. This is a lot more work, and far more error-prone.
 
+<a name="example"></a>
 ## Example
 
 ```js
@@ -27,6 +41,7 @@ const searchPixie = () => async (props) => {
 const destroy = attachPixie(redux, searchPixie)
 ```
 
+<a name="writing-pixies"></a>
 ## Writing Pixies
 
 A pixie is just a function that returns an `update` function and a `destroy` function:
@@ -64,6 +79,7 @@ Sometimes pixies create resources that they would like to share with others. For
 
 To do this, a pixie can call `onOutput` at any time to share some data. The latest value passed to `onOutput` becomes the pixie's output, and other pixies can see it via the `props.output` structure.
 
+<a name="managing-pixies"></a>
 ## Managing pixies
 
 ### Starting pixies
@@ -145,6 +161,7 @@ const chatListPixie = mapPixie(
 )
 ```
 
+<a name="testing-pixies"></a>
 ## Testing pixies
 
 Since pixies are directly responsible for talking to the outside world, the best way to test them is using mocks. To do this, write your pixies to only use IO resources passed in through `props`. For example, the following code passes the browser's `fetch` function into a pixie:
@@ -164,6 +181,7 @@ testPixie.update({ fetch: fetchMock, dispatch: done })
 testPixie.destroy()
 ```
 
+<a name="pixie-enhancers"></a>
 ## Pixie enhancers
 
 ### One-shot pixies
@@ -224,6 +242,7 @@ const safePixie = catchPixieErrors(
 
 Using this enhancer throughout your tree of pixies can limit a failed pixie's destruction to just the affected subsystem.
 
+<a name="implementation-details"></a>
 ## Implementation details
 
 Since pixies are just functions that return other functions, there is nothing preventing you from calling them directly yourself. Although this will produce a working pixie instance, many features will be missing compared to using `startPixie`. Specifically, `startPixie` passes the pixies through the `reflectPixieOutput` and `catchPixieError` enhancers to get the default `onOutput` and `onError` behavior.
