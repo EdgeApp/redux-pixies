@@ -11,7 +11,7 @@ This is much easier than action-based side-effect approaches like [redux-thunk](
 ## Example
 
 ```js
-import { attachPixie } from './pixies.js'
+import { attachPixie } from 'redux-pixies'
 
 const searchPixie = () => async (props) => {
   // If the user is on the search page, but has no search results,
@@ -54,7 +54,7 @@ const examplePixie = (onError, onOutput) => props => {
 
 ### Reporting errors
 
-If a pixie encounters an error, it should call `onError`. Pixies can call this function at any time, including from within timers and event handlers. If a pixie function throws an exception, or if `update` returns a rejected promise, that error will be captured and passed along to `onError` too.
+If a pixie encounters an error, it should call `onError`. Pixies can call this function at any time, including from within timers and event handlers. If a pixie function throws an exception, or if `update` returns a rejected promise, that error will also be captured and passed along to `onError`.
 
 Calling `onError` shuts down the pixie, calling its `destroy` method and preventing it from receiving further `update` calls. The next time the props change, a new pixie will be created in the destroyed pixie's place. If a pixie does not want this behavior, it should handle the error gracefully itself instead of calling `onError`.
 
@@ -157,7 +157,7 @@ const testablePixie = wrapPixie(
 
 ## Pixie enhancers
 
-Since pixies are just functions that returns other functions, there is nothing preventing you from calling them directly yourself. Although this will produce a working pixie instance, many features will be missing.
+Since pixies are just functions that return other functions, there is nothing preventing you from calling them directly yourself. Although this will produce a working pixie instance, many features will be missing.
 
 To get these features back, `redux-pixies` provides several pixie enhancer functions. You can use these to get better control over error handling or output, or you can use them to bypass `attachPixie` while still maintaining full functionality:
 
@@ -186,7 +186,7 @@ const safePixie = catchPixieErrors(
   subsystemPixie,
 
   // Called whenever there is an error:
-  (error, props) => props.dispatch({ 
+  (error, props) => props.dispatch({
     type: SUBSYSTEM_FAILED,
     payload: error,
     error: true
@@ -217,6 +217,8 @@ patientPixie = reflectPixieProps(() => props => {
 })
 ```
 
+## Implementation details
+
 ### Wild vs. Tame Pixies
 
 There are actually two types of pixies - wild pixies and tame pixies. A wild pixie is the kind you write directly. It has the following behaviors and expectations:
@@ -232,12 +234,14 @@ A tame pixie, on the other hand, has the following behaviors and expectations:
 
 Wild pixies are obviously a lot easier to create, while tame pixies are a lot easier to use. To turn a wild pixie into a tame pixie, pass it through the `tamePixie` function. All the functions in this library automatically call `tamePixie` on their inputs, so this is not something you would normally do yourself.
 
+### Recursion rules
+
 To make things run smoothly, pixies must follow some rules. These apply to both tame and wild pixies:
 
 * The `update` function must never call itself recursively. If `update` calls `onOutput`, which changes the props, `update` must not be called again until the previous `update` returns.
 * Once `destroy` is called, no further calls to `destroy` or `update` may occur, even if `destroy` calls `onError` or `onOutput`.
 * The `destroy` function can be called at any time, even while `update` is running. This is because `update` can call `onError`.
 
-## Functional Purity
+### Functional purity
 
 The functions for deriving the `props` must be pure, meaning they don't produce any side-effects or modify any data. This allows the pixie system to avoid calls to `update` when things haven't actually changed. Besides being a nice optimization, this prevents some infinite loop scenarios where `update` calls `onOutput` which calls `update` again.
