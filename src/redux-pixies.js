@@ -39,3 +39,8 @@ export { wrapPixie } from './managers/wrapPixie.js'
 // Legacy stuff
 export { Pixie, tameClassPixie } from './enhancers/classPixie.js'
 export type { PixieCallbacks } from './enhancers/classPixie.js'
+
+/**
+ * Update functions can return this to stop all future updates.
+ */
+export const stopUpdates = { then () {} }

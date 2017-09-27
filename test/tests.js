@@ -1,5 +1,10 @@
 // @flow
-import { attachPixie, mapPixie } from '../src/redux-pixies.js'
+import {
+  attachPixie,
+  mapPixie,
+  startPixie,
+  stopUpdates
+} from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import './catchPixieError.test.js'
 import './combinePixies.test.js'
@@ -86,5 +91,19 @@ describe('pixies', function () {
 
     destroy()
     log.assert(['item pixie #0 destroyed', 'item pixie #2 destroyed'])
+  })
+
+  it('Handles stopUpdates', function () {
+    const log = makeAssertLog(false)
+    const testPixie = () => () => {
+      log('called')
+      return stopUpdates
+    }
+
+    const instance = startPixie(testPixie)
+    instance.update({})
+    instance.update({})
+    instance.destroy()
+    log.assert(['called'])
   })
 })
