@@ -8,11 +8,11 @@ import {
 import { makeAssertLog } from './assertLog.js'
 import './catchPixieError.test.js'
 import './combinePixies.test.js'
+import './filterPixie.test.js'
 import './mapPixie.test.js'
 import './oneShotPixie.test.js'
 import './reflectPixieOutput.test.js'
 import './tamePixie.test.js'
-import './wrapPixie.test.js'
 import { describe, it } from 'mocha'
 import { createStore } from 'redux'
 

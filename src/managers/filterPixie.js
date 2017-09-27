@@ -12,7 +12,7 @@ import { catchify, shallowCompare } from './util.js'
 /**
  * Filters the props going into a pixie.
  */
-export function wrapPixie<P, Q> (
+export function filterPixie<P, Q> (
   pixie: WildPixie<Q>,
   filter: (props: P) => Q | void
 ): TamePixie<P> {

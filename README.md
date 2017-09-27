@@ -101,18 +101,18 @@ The `startPixie` function filters the `update` calls, so you can call the return
 
 ### Customizing props
 
-The `redux-pixies` library provides a `wrapPixie` function, which makes it possible to customize the props going into a pixie:
+The `redux-pixies` library provides a `filterPixie` function, which makes it possible to customize the props going into a pixie:
 
 ```js
-const FilteredPixie = wrapPixie(
+const FilteredPixie = filterPixie(
   subsystemPixie,
   props => ({ login: props.output.login })
 })
 ```
 
-In this example, the subsystem pixie receives just the `login` object from the outside world; the other props are filtered out. This is useful for making pixies more stand-alone, either for easier unit-testing or for code reuse.
+In this example, the subsystem pixie receives just the `login` object from the outside world; the other props are filtered out. Since `redux-pixies` avoids unnecessary `update` calls when the props are identical, filtering the props down to the bare minimum can avoid unnecessary `update` calls for unrelated state changes.
 
-If the props are undefined, `wrapPixie` will shut down the inner pixie. Once the props exist again, `wrapPixie` will restart the pixie. This provides a declarative way to control a pixie's lifetime.
+If the props are undefined, `filterPixie` will shut down the inner pixie. Once the props exist again, `filterPixie` will restart the pixie. This provides a declarative way to control a pixie's lifetime.
 
 ### Combining pixies
 
@@ -150,7 +150,7 @@ const chatListPixie = mapPixie(
 Since pixies are directly responsible for talking to the outside world, the best way to test them is using mocks. To do this, write your pixies to only use IO resources passed in through `props`. For example, the following code passes the browser's `fetch` function into a pixie:
 
 ```js
-const injectedPixie = wrapPixie(
+const injectedPixie = filterPixie(
   serverFetchPixie,
   props => { ...props, fetch: window.fetch }
 )

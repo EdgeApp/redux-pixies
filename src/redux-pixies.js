@@ -33,8 +33,8 @@ export { tamePixie } from './enhancers/tamePixie.js'
 export { attachPixie } from './managers/attachPixie.js'
 export { startPixie } from './managers/startPixie.js'
 export { combinePixies } from './managers/combinePixies.js'
+export { filterPixie } from './managers/filterPixie.js'
 export { mapPixie } from './managers/mapPixie.js'
-export { wrapPixie } from './managers/wrapPixie.js'
 
 // Legacy stuff
 export { Pixie, tameClassPixie } from './enhancers/classPixie.js'
