@@ -166,6 +166,41 @@ testPixie.destroy()
 
 ## Pixie enhancers
 
+### One-shot pixies
+
+Sometimes a pixie will create & manage a long-running resource with callbacks. For example, a pixie might open a WebSocket, which periodically calls the pixie back with incoming messages.
+
+To simplify cases like these, the `redux-pixies` libray provides a `oneShotPixie` enhancer. Passing a pixie through this function will cause its `update` function to only be called once. Instead of receiving `props`, the `update` function will receive a wrapper object with the following methods:
+
+* `wrapper.getProps()` - Returns the latest props.
+* `wrapper.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
+* `wrapper.waitFor(props => result)` - Returns a promise that resolves when the provided result is non-null, or rejects when the pixie is destroyed. This can be used to wait for outside resources to become available.
+
+This wrapper gives the pixie ongoing access to the latest props, even though `update` is only called only. Here is an example:
+
+```js
+patientPixie = oneShotPixie((onError) => {
+  let socket
+
+  return {
+    // Create and subscribe to a WebSocket:
+    update (wrapper) {
+      socket = new WebSocket(wrapper.getProps().url)
+      socket.onmessage = event => wrapper.getProps().dispatch({
+        type: 'RECEIVED_SOCKET_DATA'
+        payload: event.data
+      })
+      socket.onerror = onError
+    },
+
+    // Close the WebSocket:
+    destroy () {
+      socket.close()
+    }
+  }
+})
+```
+
 ### Adding `output` to `props`
 
 To intercept a pixie's `onOutput` callback, making the output available to the pixie as `props.output`, pass the pixie through the `reflectPixieOutput` function. You can use this enhancer at any point in your pixie tree to limit the scope at which output becomes visible to child pixies.
@@ -188,27 +223,6 @@ const safePixie = catchPixieErrors(
 ```
 
 Using this enhancer throughout your tree of pixies can limit a failed pixie's destruction to just the affected subsystem.
-
-### Subscribing to props changes
-
-If you pass a pixie through the `reflectPixieProps` enhancer, it will recieve several new functions:
-
-* `props.getProps()` - Returns the latest props.
-* `props.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
-* `props.pauseUntil(props => condition)` - Returns a promise that resolves when the provided condition is true, or rejects when the pixie is destroyed.
-
-This sort of thing is especially useful in detached situations like event handlers, which want access to the latest props, but aren't directly tied to the `update` function:
-
-```js
-patientPixie = reflectPixieProps(() => props => {
-  someLibrary.onEvent = () => {
-    // The original `props` is a frozen in time from when this callback
-    // was created, so use `getProps` to get the latest props:
-    const freshProps = props.getProps()
-    doSomething(freshProps)
-  }
-})
-```
 
 ## Implementation details
 

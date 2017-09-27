@@ -21,13 +21,13 @@ export type TamePixie<P> = (
 
 // Pixie enhancers:
 export { catchPixieError } from './enhancers/catchPixieError.js'
+export { oneShotPixie } from './enhancers/oneShotPixie.js'
 export { reflectPixieOutput } from './enhancers/reflectPixieOutput.js'
-export { reflectPixieProps } from './enhancers/reflectPixieProps.js'
-export { tamePixie } from './enhancers/tamePixie.js'
 export type {
   Condition,
-  ReflectedProps
-} from './enhancers/reflectPixieProps.js'
+  PropsWrapper
+} from './enhancers/oneShotPixie.js'
+export { tamePixie } from './enhancers/tamePixie.js'
 
 // Pixie managers:
 export { attachPixie } from './managers/attachPixie.js'
