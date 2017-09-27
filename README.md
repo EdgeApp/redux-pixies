@@ -89,6 +89,16 @@ const destroy = attachPixie(
 )
 ```
 
+If you would like to use pixies without a Redux store, such as for unit-testing, use `startPixie`:
+
+```js
+const instance = startPixie(pixie)
+instance.update(props)
+instance.destroy()
+```
+
+The `startPixie` function filters the `update` calls, so you can call the returned `update` function as often as you like. As with `attachPixie`, you can also provide your own `onError` and `onOutput` callbacks.
+
 ### Customizing props
 
 The `redux-pixies` library provides a `wrapPixie` function, which makes it possible to customize the props going into a pixie:
@@ -149,33 +159,16 @@ const injectedPixie = wrapPixie(
 Now, when the time comes to unit-test this code, just pass a [mock `fetch` function](http://www.wheresrhys.co.uk/fetch-mock/) into the props instead:
 
 ```js
-const testablePixie = wrapPixie(
-  serverFetchPixie,
-  props => ({ ...props, fetch: fetchMock })
-)
+const testPixie = startPixie(serverFetchPixie)
+testPixie.update({ fetch: fetchMock, dispatch: done })
+testPixie.destroy()
 ```
 
 ## Pixie enhancers
 
-Since pixies are just functions that return other functions, there is nothing preventing you from calling them directly yourself. Although this will produce a working pixie instance, many features will be missing.
-
-To get these features back, `redux-pixies` provides several pixie enhancer functions. You can use these to get better control over error handling or output, or you can use them to bypass `attachPixie` while still maintaining full functionality:
-
-```js
-const enhancedPixie = reflectPixieOutput(catchPixieError(innerPixie))
-
-const instance = enhancedPixie(onError, onOutput)
-instance.update(someProps)
-instance.destroy()
-```
-
-If the inner pixie in this example throws any exceptions, they will all flow out through `onError`. The `onError` callback, in turn, will shut down the inner pixie cleanly. The `props.output` property will update properly, and the inner pixie's `update` function will only run once the previous call has finished, no matter how many times the outer code calls `instance.update`. None of these things would happen without the `reflectPixieOutput` or `catchPixieError` enhancers.
-
 ### Adding `output` to `props`
 
-To intercept a pixie's `onOutput` callback, making the output available to the pixie as `props.output`, pass the pixie through the `reflectPixieOutput` function. You can use this enhancer at any point in your pixie tree to limit the scope of which output is visible to which pixies.
-
-The `attachPixie` function automatically applies this function to its input, which is why `props.output` is available to all pixies by default.
+To intercept a pixie's `onOutput` callback, making the output available to the pixie as `props.output`, pass the pixie through the `reflectPixieOutput` function. You can use this enhancer at any point in your pixie tree to limit the scope at which output becomes visible to child pixies.
 
 ### Catching pixie errors
 
@@ -194,7 +187,7 @@ const safePixie = catchPixieErrors(
 )
 ```
 
-The `attachPixie` function automatically applies this function to its input, so the entire pixie tree will shut down by default if any pixie calls `onError`. Using this enhancer throughout your tree of pixies can limit a failed pixie's destruction to just the affected subsystem.
+Using this enhancer throughout your tree of pixies can limit a failed pixie's destruction to just the affected subsystem.
 
 ### Subscribing to props changes
 
@@ -218,6 +211,8 @@ patientPixie = reflectPixieProps(() => props => {
 ```
 
 ## Implementation details
+
+Since pixies are just functions that return other functions, there is nothing preventing you from calling them directly yourself. Although this will produce a working pixie instance, many features will be missing compared to using `startPixie`. Specifically, `startPixie` passes the pixies through the `reflectPixieOutput` and `catchPixieError` enhancers to get the default `onOutput` and `onError` behavior.
 
 ### Wild vs. Tame Pixies
 

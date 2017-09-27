@@ -31,6 +31,7 @@ export type {
 
 // Pixie managers:
 export { attachPixie } from './managers/attachPixie.js'
+export { startPixie } from './managers/startPixie.js'
 export { combinePixies } from './managers/combinePixies.js'
 export { mapPixie } from './managers/mapPixie.js'
 export { wrapPixie } from './managers/wrapPixie.js'
