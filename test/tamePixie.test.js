@@ -51,10 +51,10 @@ describe('tamePixie', function () {
 
     const instance = tamePixie(badPixie)(onError, () => {})
     instance.update({})
-    log.assert(['update'])
+    log.assert(['update', 'destroy'])
 
-    instance.destroy()
-    log.assert(['destroy'])
+    instance.destroy() // Should aready be destroyed
+    log.assert([])
   })
 
   it('serializes update calls', async function () {

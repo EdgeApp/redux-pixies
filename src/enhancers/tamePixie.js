@@ -31,33 +31,57 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     let propsCache: P
     let propsDirty: boolean = true
     let updating: boolean = false
+    let destroyed: boolean = false
 
-    const tryUpdate = () => {
-      if (instance && propsDirty && !updating) {
+    function destroy () {
+      try {
+        const copy = instance
+        instance = void 0
+        if (copy) copy.destroy()
+      } catch (e) {
+        onError(e)
+      }
+      destroyed = true
+    }
+
+    // Ignore any callbacks once `destroy` has completed:
+    function innerOnError (e: Error) {
+      if (!destroyed) onError(e)
+      destroy()
+    }
+
+    function innerOnOutput (data: any) {
+      if (!destroyed) onOutput(data)
+    }
+
+    function onUpdateDone () {
+      updating = false
+      tryUpdate()
+    }
+
+    function tryUpdate () {
+      // eslint-disable-next-line no-unmodified-loop-condition
+      while (instance && propsDirty && !updating) {
         propsDirty = false
         updating = true
 
         try {
           const thenable = instance.update(propsCache)
           if (thenable && typeof thenable.then === 'function') {
-            const onDone = () => {
-              updating = false
-              tryUpdate()
-            }
-            thenable.then(onDone, onError)
+            thenable.then(onUpdateDone, innerOnError)
           } else {
             updating = false
           }
         } catch (e) {
-          onError(e)
+          innerOnError(e)
         }
       }
     }
 
     try {
-      instance = fixInstance(wildPixie(onError, onOutput))
+      instance = fixInstance(wildPixie(innerOnError, innerOnOutput))
     } catch (e) {
-      onError(e)
+      innerOnError(e)
     }
 
     return {
@@ -67,14 +91,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
         tryUpdate()
       },
 
-      destroy () {
-        try {
-          if (instance) instance.destroy()
-          instance = void 0
-        } catch (e) {
-          onError(e)
-        }
-      }
+      destroy
     }
   }
   outPixie.tame = true
