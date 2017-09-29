@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   TamePixie,
   WildPixie
 } from '../redux-pixies.js'
@@ -23,7 +22,8 @@ export function oneShotPixie<P: {}> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onError, onOutput } = input
     let propsCache: P
     let resolvers: Array<(value: any) => void> = []
     let rejectors: Array<(value: any) => void> = []
@@ -56,7 +56,8 @@ export function oneShotPixie<P: {}> (
       }
     }
 
-    const instance = tamedPixie(onError, onOutput)
+    const childInput: PixieInput = { onError, onOutput }
+    const instance = tamedPixie(childInput)
 
     return {
       update (props: P) {

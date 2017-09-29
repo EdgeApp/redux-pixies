@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   WildPixie
@@ -19,14 +18,15 @@ export function mapPixie<P, Q> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onError } = input
     let instances: { [id: string]: PixieInstance<Q> } = {}
     let outputs: { [id: string]: any } = {}
     let outputsDirty: boolean = false
     const propsCache: { [id: string]: Q | void } = {}
     let updating: boolean = false
     let destroyed: boolean = false
-    onOutput(outputs)
+    input.onOutput(outputs)
 
     const safeListIds = catchify(listIds, onError)
     const safeFilter = catchify(filter, onError)
@@ -38,7 +38,7 @@ export function mapPixie<P, Q> (
           newOutputs[id] = outputs[id]
         }
         outputs = newOutputs
-        onOutput(outputs)
+        input.onOutput(outputs)
       }
     }
 
@@ -58,14 +58,14 @@ export function mapPixie<P, Q> (
 
           if (innerProps) {
             if (!instances[id]) {
-              const onOutputInner = (data: any) => {
+              const onOutput = (data: any) => {
                 if (data !== outputs[id]) {
                   outputs[id] = data
                   outputsDirty = true
                   updateOutputs()
                 }
               }
-              instances[id] = tamedPixie(onError, onOutputInner)
+              instances[id] = tamedPixie({ onError, onOutput })
               if (destroyed) return
             }
             if (dirty) instances[id].update(innerProps)

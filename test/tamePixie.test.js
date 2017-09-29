@@ -3,6 +3,9 @@ import { tamePixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
+function onError () {}
+function onOutput () {}
+
 describe('tamePixie', function () {
   it('handles raw update functions', function () {
     const log = makeAssertLog()
@@ -12,7 +15,7 @@ describe('tamePixie', function () {
       log('update')
     }
 
-    const instance = tamePixie(testPixie)(onError, () => {})
+    const instance = tamePixie(testPixie)({ onError, onOutput })
     instance.update({})
     instance.destroy()
     log.assert(['update'])
@@ -26,7 +29,7 @@ describe('tamePixie', function () {
       throw new Error('create')
     }
 
-    const instance = tamePixie(badPixie)(onError, () => {})
+    const instance = tamePixie(badPixie)({ onError, onOutput })
     log.assert(['create'])
 
     instance.update({})
@@ -49,7 +52,7 @@ describe('tamePixie', function () {
       }
     }
 
-    const instance = tamePixie(badPixie)(onError, () => {})
+    const instance = tamePixie(badPixie)({ onError, onOutput })
     instance.update({})
     log.assert(['update', 'destroy'])
 
@@ -65,7 +68,7 @@ describe('tamePixie', function () {
       return Promise.resolve(1)
     }
 
-    const instance = tamePixie(testPixie)(() => {}, () => {})
+    const instance = tamePixie(testPixie)({ onError, onOutput })
     instance.update({ x: 'a' })
     instance.update({ x: 'b' })
     log.assert(['update a'])
@@ -83,7 +86,7 @@ describe('tamePixie', function () {
       return Promise.reject(new Error('rejected'))
     }
 
-    const instance = tamePixie(testPixie)(onError, () => {})
+    const instance = tamePixie(testPixie)({ onError, onOutput })
     instance.update({})
     log.assert(['update'])
 

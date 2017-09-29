@@ -47,7 +47,7 @@ const destroy = attachPixie(redux, searchPixie)
 A pixie is just a function that returns an `update` function and a `destroy` function:
 
 ```js
-function examplePixie (onError, onOutput) {
+function examplePixie ({ onError, onOutput }) {
   return {
     update (props) {},
     destroy () {}
@@ -62,7 +62,7 @@ Pixies can be destroyed at any time, even while their async `update` function is
 If the `destroy` function isn't needed, the pixie can just return the `update` function directly. Combined with ES2015 arrow functions, this allows pixies to be very compact:
 
 ```js
-const examplePixie = (onError, onOutput) => props => {
+const examplePixie = ({ onError, onOutput }) => props => {
   // Do the update here...
 }
 ```
@@ -197,7 +197,7 @@ To simplify cases like these, the `redux-pixies` libray provides a `oneShotPixie
 This wrapper gives the pixie ongoing access to the latest props, even though `update` is only called only. Here is an example:
 
 ```js
-patientPixie = oneShotPixie((onError) => {
+patientPixie = oneShotPixie(({ onError }) => {
   let socket
 
   return {

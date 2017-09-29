@@ -3,12 +3,14 @@ import { catchPixieError } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
+function onOutput () {}
+
 describe('catchPixieError', function () {
   it('basic operation', function () {
     const log = makeAssertLog(true)
     const onError = e => log(e.message)
 
-    const testPixie = onError => ({
+    const testPixie = ({ onError }) => ({
       update (props: {}) {
         log('update')
         onError(new Error('update error'))
@@ -19,7 +21,7 @@ describe('catchPixieError', function () {
       }
     })
 
-    const instance = catchPixieError(testPixie)(onError, () => {})
+    const instance = catchPixieError(testPixie)({ onError, onOutput })
     instance.update({})
     log.assert(['destroy error', 'destroy', 'update error', 'update'])
   })

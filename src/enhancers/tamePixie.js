@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   UpdateFunction,
@@ -26,7 +25,7 @@ function fixInstance<P> (
  * from running in parallel if if returns a promise.
  */
 export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
     let instance: PixieInstance<P> | void
     let propsCache: P
     let propsDirty: boolean = true
@@ -45,13 +44,13 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     }
 
     // Ignore any callbacks once `destroy` has completed:
-    function innerOnError (e: Error) {
-      if (!destroyed) onError(e)
+    function onError (e: Error) {
+      if (!destroyed) input.onError(e)
       destroy()
     }
 
-    function innerOnOutput (data: any) {
-      if (!destroyed) onOutput(data)
+    function onOutput (data: any) {
+      if (!destroyed) input.onOutput(data)
     }
 
     function onUpdateDone () {
@@ -68,20 +67,21 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
         try {
           const thenable = instance.update(propsCache)
           if (thenable && typeof thenable.then === 'function') {
-            thenable.then(onUpdateDone, innerOnError)
+            thenable.then(onUpdateDone, onError)
           } else {
             updating = false
           }
         } catch (e) {
-          innerOnError(e)
+          onError(e)
         }
       }
     }
 
+    const childInput: PixieInput = { onError, onOutput }
     try {
-      instance = fixInstance(wildPixie(innerOnError, innerOnOutput))
+      instance = fixInstance(wildPixie(childInput))
     } catch (e) {
-      innerOnError(e)
+      onError(e)
     }
 
     return {

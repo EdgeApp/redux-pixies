@@ -3,12 +3,14 @@ import { reflectPixieOutput } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
+function onError () {}
+
 describe('reflectPixieOutput', function () {
   it('output during creation', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 
-    const testPixie = (onError, onOutput) => {
+    const testPixie = ({ onOutput }) => {
       onOutput(1)
       return {
         update (props: {}) {
@@ -20,7 +22,7 @@ describe('reflectPixieOutput', function () {
       }
     }
 
-    const instance = reflectPixieOutput(testPixie)(() => {}, onOutput)
+    const instance = reflectPixieOutput(testPixie)({ onError, onOutput })
     instance.update({})
     instance.update({ x: 2 })
     instance.destroy()
@@ -36,7 +38,7 @@ describe('reflectPixieOutput', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 
-    const testPixie = (onError, onOutput) => {
+    const testPixie = ({ onOutput }) => {
       return {
         update (props: {}) {
           log('update ' + JSON.stringify(props))
@@ -48,7 +50,7 @@ describe('reflectPixieOutput', function () {
       }
     }
 
-    const instance = reflectPixieOutput(testPixie)(() => {}, onOutput)
+    const instance = reflectPixieOutput(testPixie)({ onError, onOutput })
     instance.update({})
     instance.update({ x: 2 })
     instance.destroy()
@@ -65,7 +67,7 @@ describe('reflectPixieOutput', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + data)
 
-    const testPixie = (onError, onOutput) => {
+    const testPixie = ({ onError, onOutput }) => {
       return {
         update (props: {}) {
           log('update ' + JSON.stringify(props))
@@ -77,7 +79,7 @@ describe('reflectPixieOutput', function () {
       }
     }
 
-    const instance = reflectPixieOutput(testPixie)(() => {}, onOutput)
+    const instance = reflectPixieOutput(testPixie)({ onError, onOutput })
     instance.update({})
     instance.update({ x: 2 })
     instance.destroy()

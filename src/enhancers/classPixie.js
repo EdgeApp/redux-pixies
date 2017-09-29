@@ -1,5 +1,10 @@
 // @flow
-import type { OnError, OnOutput, TamePixie } from '../redux-pixies.js'
+import type {
+  OnError,
+  OnOutput,
+  PixieInput,
+  TamePixie
+} from '../redux-pixies.js'
 import { tamePixie } from './tamePixie.js'
 
 export interface PixieCallbacks {
@@ -33,7 +38,8 @@ export class Pixie<P> {
  * Turns a class-style pixie into a tame pixie.
  */
 export function tameClassPixie<P> (Constructor: Class<Pixie<P>>): TamePixie<P> {
-  return tamePixie((onError: OnError, onOutput: OnOutput) => {
+  return tamePixie(({ onError, onOutput }: PixieInput) => {
+    const callbacks: PixieCallbacks = { onError, onOutput }
     let instance: Pixie<P>
     let propsCache: P
 
@@ -41,13 +47,13 @@ export function tameClassPixie<P> (Constructor: Class<Pixie<P>>): TamePixie<P> {
       update (props: P) {
         propsCache = props
         if (!instance) {
-          instance = new Constructor(props, { onError, onOutput })
+          instance = new Constructor(props, callbacks)
         }
-        return instance.update(props, { onError, onOutput })
+        return instance.update(props, callbacks)
       },
 
       destroy () {
-        return instance.destroy(propsCache, { onError, onOutput })
+        return instance.destroy(propsCache, callbacks)
       }
     }
   })

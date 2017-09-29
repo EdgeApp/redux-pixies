@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   WildPixie
@@ -14,7 +13,8 @@ import { tamePixie } from './tamePixie.js'
 export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onError } = input
     let instance: PixieInstance<P> | void
     let output: any
     let propsCache: P
@@ -32,20 +32,21 @@ export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
       }
     }
 
-    const onOutputInner = (data: any) => {
+    const onOutput = (data: any) => {
       if (data !== output) {
         output = data
         propsDirty = true
-        onOutput(data)
+        input.onOutput(data)
         tryUpdate()
       }
     }
 
+    const childInput: PixieInput = { onError, onOutput }
     return {
       update (props: P) {
         propsCache = props
         propsDirty = true
-        if (!instance) instance = tamedPixie(onError, onOutputInner)
+        if (!instance) instance = tamedPixie(childInput)
         tryUpdate()
       },
 

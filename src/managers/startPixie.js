@@ -19,5 +19,5 @@ export function startPixie<P: {}> (
   onError: OnError = defaultOnError,
   onOutput: OnOutput = defaultOnOutput
 ): PixieInstance<P> {
-  return catchPixieError(reflectPixieOutput(pixie))(onError, onOutput)
+  return catchPixieError(reflectPixieOutput(pixie))({ onError, onOutput })
 }

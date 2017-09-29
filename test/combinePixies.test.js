@@ -8,7 +8,7 @@ describe('combinePixies', function () {
     const log = makeAssertLog()
     const onOutput = data => log('output ' + JSON.stringify(data))
 
-    const testPixie1 = (onError, onOutput) => ({
+    const testPixie1 = ({ onError, onOutput }) => ({
       update (props: {}) {
         log('update 1 ' + JSON.stringify(props))
         onOutput(1)
@@ -18,7 +18,7 @@ describe('combinePixies', function () {
       }
     })
 
-    const testPixie2 = (onError, onOutput) => ({
+    const testPixie2 = ({ onError, onOutput }) => ({
       update (props: {}) {
         log('update 2 ' + JSON.stringify(props))
         onOutput(2)

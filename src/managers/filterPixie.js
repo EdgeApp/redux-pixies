@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   WildPixie
@@ -18,12 +17,15 @@ export function filterPixie<P, Q> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onError, onOutput } = input
     let instance: PixieInstance<Q> | void
     let propsCache: Q | void
     let destroyed: boolean = false
 
     const safeFilter = catchify(filter, onError)
+
+    const childInput: PixieInput = { onError, onOutput }
 
     return {
       update (props: P) {
@@ -34,7 +36,7 @@ export function filterPixie<P, Q> (
 
         // Start or stop the instance:
         if (innerProps) {
-          if (!instance) instance = tamedPixie(onError, onOutput)
+          if (!instance) instance = tamedPixie(childInput)
           if (destroyed) return
           if (dirty) instance.update(innerProps)
         } else {

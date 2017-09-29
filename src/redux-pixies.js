@@ -4,29 +4,27 @@ export type OnOutput = (data: any) => void
 export type UpdateFunction<P> = (props: P) => any
 export type DestroyFunction = () => void
 
+export interface PixieInput {
+  onError: OnError,
+  onOutput: OnOutput
+}
+
 export interface PixieInstance<P> {
   update(props: P): any,
   destroy(): void
 }
 
 export type WildPixie<P> = (
-  onError: OnError,
-  onOutput: OnOutput
+  input: PixieInput
 ) => PixieInstance<P> | UpdateFunction<P>
 
-export type TamePixie<P> = (
-  onError: OnError,
-  onOutput: OnOutput
-) => PixieInstance<P>
+export type TamePixie<P> = (input: PixieInput) => PixieInstance<P>
 
 // Pixie enhancers:
 export { catchPixieError } from './enhancers/catchPixieError.js'
 export { oneShotPixie } from './enhancers/oneShotPixie.js'
 export { reflectPixieOutput } from './enhancers/reflectPixieOutput.js'
-export type {
-  Condition,
-  PropsWrapper
-} from './enhancers/oneShotPixie.js'
+export type { Condition, PropsWrapper } from './enhancers/oneShotPixie.js'
 export { tamePixie } from './enhancers/tamePixie.js'
 
 // Pixie managers:

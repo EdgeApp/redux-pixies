@@ -1,7 +1,7 @@
 // @flow
 import type {
   OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   WildPixie
@@ -23,7 +23,8 @@ export function catchPixieError<P: {}> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onOutput } = input
     let instance: PixieInstance<P> | void
     let propsCache: P
 
@@ -33,19 +34,21 @@ export function catchPixieError<P: {}> (
       if (copy) copy.destroy()
     }
 
-    const onErrorInner = (e: any) => {
+    function onError (e: any) {
       destroy()
       try {
-        errorHandler(e, propsCache, onError)
+        errorHandler(e, propsCache, input.onError)
       } catch (e) {
-        onError(e)
+        input.onError(e)
       }
     }
+
+    const childInput: PixieInput = { onError, onOutput }
 
     return {
       update (props: P) {
         propsCache = props
-        if (!instance) instance = tamedPixie(onErrorInner, onOutput)
+        if (!instance) instance = tamedPixie(childInput)
         instance.update(props)
       },
 

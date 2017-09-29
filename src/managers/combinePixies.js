@@ -1,7 +1,6 @@
 // @flow
 import type {
-  OnError,
-  OnOutput,
+  PixieInput,
   PixieInstance,
   TamePixie,
   WildPixie
@@ -14,21 +13,24 @@ import { tamePixie } from '../enhancers/tamePixie.js'
 export function combinePixies<P> (pixieMap: {
   [id: string]: WildPixie<P>
 }): TamePixie<P> {
-  function outPixie (onError: OnError, onOutput: OnOutput) {
+  function outPixie (input: PixieInput) {
+    const { onError } = input
+    const childInputs: { [id: string]: PixieInput } = {}
     const instances: { [id: string]: PixieInstance<P> } = {}
     let outputs: { [id: string]: any } = {}
     let destroyed: boolean = false
-    onOutput(outputs)
+    input.onOutput(outputs)
 
     for (const id of Object.keys(pixieMap)) {
-      const onOutputInner = (data: any) => {
+      const onOutput = (data: any) => {
         if (data !== outputs[id]) {
           outputs = { ...outputs }
           outputs[id] = data
-          onOutput(outputs)
+          input.onOutput(outputs)
         }
       }
-      instances[id] = tamePixie(pixieMap[id])(onError, onOutputInner)
+      childInputs[id] = { onError, onOutput }
+      instances[id] = tamePixie(pixieMap[id])(childInputs[id])
       if (destroyed) break
     }
 
