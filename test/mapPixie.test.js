@@ -1,5 +1,5 @@
 // @flow
-import { mapPixie } from '../src/redux-pixies.js'
+import { mapPixie, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
@@ -26,7 +26,7 @@ describe('mapPixie', function () {
         if (id > '2') return { id }
       }
     )
-    const instance = mappedPixie(() => {}, () => {})
+    const instance = startPixie(mappedPixie)
 
     instance.update({ ids: ['0'] })
     log.assert([])

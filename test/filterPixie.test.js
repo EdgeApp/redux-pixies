@@ -1,5 +1,5 @@
 // @flow
-import { filterPixie } from '../src/redux-pixies.js'
+import { filterPixie, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 
@@ -19,10 +19,10 @@ describe('filterPixie', function () {
       }
     }
 
-    const wrappedPixie = filterPixie(testPixie, (props: { x: number }) => {
+    const filteredPixie = filterPixie(testPixie, (props: { x: number }) => {
       if (props.x > 2) return { y: props.x }
     })
-    const instance = wrappedPixie(() => {}, () => {})
+    const instance = startPixie(filteredPixie)
 
     instance.update({ x: 0 })
     instance.update({ x: 4 })

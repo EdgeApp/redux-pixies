@@ -17,7 +17,7 @@ describe('oneShotPixie', function () {
       expect(props).has.property('waitFor')
     }
 
-    oneShotPixie(testPixie)(() => {}, () => {})
+    startPixie(oneShotPixie(testPixie))
   })
 
   it('adds function properties', async function () {
@@ -38,7 +38,7 @@ describe('oneShotPixie', function () {
       if (!onEvent) onEvent = () => log(wrapper.getProps())
     }
 
-    const instance = oneShotPixie(testPixie)(() => {}, () => {})
+    const instance = startPixie(oneShotPixie(testPixie))
 
     instance.update({ x: 1 })
     instance.update({ x: 2 })
@@ -60,7 +60,7 @@ describe('oneShotPixie', function () {
       }
     }
 
-    const instance = oneShotPixie(testPixie)(() => {}, () => {})
+    const instance = startPixie(oneShotPixie(testPixie))
 
     instance.update({ x: 1 })
     if (onEvent) onEvent()
@@ -83,7 +83,7 @@ describe('oneShotPixie', function () {
       }
     }
 
-    const instance = oneShotPixie(testPixie)(() => {}, () => {})
+    const instance = startPixie(oneShotPixie(testPixie))
 
     instance.update({ x: 1 })
     if (onEvent) onEvent()
@@ -106,7 +106,7 @@ describe('oneShotPixie', function () {
       }
     }
 
-    const instance = oneShotPixie(testPixie)(() => {}, () => {})
+    const instance = startPixie(oneShotPixie(testPixie))
 
     instance.update({ x: void 0 })
     log.assert([])
@@ -135,7 +135,7 @@ describe('oneShotPixie', function () {
       }
     }
 
-    const instance = oneShotPixie(testPixie)(() => {}, () => {})
+    const instance = startPixie(oneShotPixie(testPixie))
 
     instance.update({ x: void 0 })
     log.assert([])
