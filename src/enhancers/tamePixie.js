@@ -9,6 +9,16 @@ import type {
   PixieInput
 } from '../redux-pixies.js'
 
+function makePixieShutdownError () {
+  const e = new Error('Pixie has been destroyed')
+  e.name = 'PixieShutdownError'
+  return e
+}
+
+export function isPixieShutdownError (e: any) {
+  return e instanceof Error && e.name === 'PixieShutdownError'
+}
+
 /**
  * If a wild pixie returns a bare function, turn that into a proper object.
  */
@@ -45,7 +55,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
             nextPromise = void 0
             rejector = void 0
             resolver = void 0
-            copy(new Error('Pixie has been destroyed'))
+            copy(makePixieShutdownError())
           }
           const copy = instance
           instance = void 0

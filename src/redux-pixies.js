@@ -31,7 +31,7 @@ export type WildPixie<P> = (
 // Pixie enhancers:
 export { catchPixieError } from './enhancers/catchPixieError.js'
 export { reflectPixieOutput } from './enhancers/reflectPixieOutput.js'
-export { tamePixie } from './enhancers/tamePixie.js'
+export { tamePixie, isPixieShutdownError } from './enhancers/tamePixie.js'
 
 // Pixie managers:
 export { attachPixie } from './managers/attachPixie.js'

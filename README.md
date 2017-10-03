@@ -95,6 +95,8 @@ Sometimes a pixie will create & manage a long-running resource with callbacks. F
 * `input.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
 * `input.waitFor(props => result)` - Returns a promise that resolves when the provided result is non-null, or rejects when the pixie is destroyed. This can be used to wait for outside resources to become available.
 
+Pixies can pass the rejected error to `isPixieShutdownError` to determine if the promise was rejected because the pixie was destroyed.
+
 <a name="managing-pixies"></a>
 ## Managing pixies
 

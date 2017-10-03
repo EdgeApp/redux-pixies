@@ -177,7 +177,7 @@ describe('tamePixie', function () {
 
     instance.destroy()
     await tinyTimeout()
-    log.assert(['Error'])
+    log.assert(['PixieShutdownError'])
   })
 
   it('waitFor returns item', async function () {
@@ -230,6 +230,6 @@ describe('tamePixie', function () {
 
     instance.destroy()
     await tinyTimeout()
-    log.assert(['Error']) // Promise is resolved
+    log.assert(['PixieShutdownError']) // Promise is resolved
   })
 })
