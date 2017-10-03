@@ -1,10 +1,16 @@
 // @flow
+import { expect } from 'chai'
+import { describe, it } from 'mocha'
+import type { WildPixieInput } from '../src/redux-pixies.js'
 import { tamePixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
-import { describe, it } from 'mocha'
 
 function onError () {}
 function onOutput () {}
+
+function tinyTimeout () {
+  return new Promise(resolve => setTimeout(resolve, 1))
+}
 
 describe('tamePixie', function () {
   it('handles raw update functions', function () {
@@ -92,5 +98,138 @@ describe('tamePixie', function () {
 
     await new Promise(resolve => setTimeout(resolve, 1))
     log.assert(['rejected'])
+  })
+
+  it('adds input properties', async function () {
+    const testPixie = input => {
+      expect(input).has.property('props')
+      expect(input).has.property('nextProps')
+      expect(input).has.property('waitFor')
+      return (props: {}) => input.onOutput()
+    }
+
+    return new Promise((resolve, reject) => {
+      const input = { onError: reject, onOutput: resolve }
+      const instance = tamePixie(testPixie)(input)
+      instance.update({})
+    })
+  })
+
+  it('props getter stays up to date', function () {
+    const log = makeAssertLog()
+    let onEvent: (() => void) | void
+
+    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+      if (!onEvent) onEvent = () => log(input.props)
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: 1 })
+    instance.update({ x: 2 })
+    if (onEvent) onEvent()
+    log.assert(['{"x":2}'])
+
+    instance.update({ x: 3 })
+    if (onEvent) onEvent()
+    log.assert(['{"x":3}'])
+  })
+
+  it('nextProps return props', async function () {
+    const log = makeAssertLog()
+    let onEvent: (() => any) | void
+
+    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+      if (!onEvent) {
+        onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
+      }
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: 1 })
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert([]) // Promise is still waiting
+
+    instance.update({ x: 2 })
+    instance.update({ x: 3 })
+    await tinyTimeout()
+    log.assert(['{"x":2}'])
+  })
+
+  it('nextProps rejects on destruction', async function () {
+    const log = makeAssertLog()
+    let onEvent: (() => any) | void
+
+    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+      if (!onEvent) {
+        onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
+      }
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: 1 })
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert([]) // Promise is still waiting
+
+    instance.destroy()
+    await tinyTimeout()
+    log.assert(['Error'])
+  })
+
+  it('waitFor returns item', async function () {
+    const log = makeAssertLog()
+    let onEvent: (() => any) | void
+
+    const testPixie = (input: WildPixieInput<{ x: number | void }>) => () => {
+      if (!onEvent) {
+        onEvent = () =>
+          input.waitFor(props => props.x).then(p => log(p), e => log(e.name))
+      }
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: void 0 })
+    log.assert([])
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert([]) // Promise is still waiting
+
+    instance.update({ x: 2 })
+    instance.update({ x: 3 })
+    await tinyTimeout()
+    log.assert(['2']) // Promise resolved
+
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert(['3'])
+  })
+
+  it('waitFor rejects on destruction', async function () {
+    const log = makeAssertLog()
+    let onEvent: (() => any) | void
+
+    const testPixie = (input: WildPixieInput<{ x: number | void }>) => () => {
+      if (!onEvent) {
+        onEvent = () =>
+          input.waitFor(props => props.x).then(p => log(p), e => log(e.name))
+      }
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: void 0 })
+    log.assert([])
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert([]) // Promise is still waiting
+
+    instance.destroy()
+    await tinyTimeout()
+    log.assert(['Error']) // Promise is resolved
   })
 })

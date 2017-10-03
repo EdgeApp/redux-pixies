@@ -47,7 +47,7 @@ const destroy = attachPixie(redux, searchPixie)
 A pixie is just a function that returns an `update` function and a `destroy` function:
 
 ```js
-function examplePixie ({ onError, onOutput }) {
+function examplePixie (input) {
   return {
     update (props) {},
     destroy () {}
@@ -67,9 +67,17 @@ const examplePixie = ({ onError, onOutput }) => props => {
 }
 ```
 
+The `input` parameter is an object with the following properties:
+
+* `onError`
+* `onOutput`
+* `props`
+* `nextProps`
+* `waitFor`
+
 ### Reporting errors
 
-If a pixie encounters an error, it should call `onError`. Pixies can call this function at any time, including from within timers and event handlers. If a pixie function throws an exception, or if `update` returns a rejected promise, that error will also be captured and passed along to `onError`.
+If a pixie encounters an error, it should call `input.onError`. Pixies can call this function at any time, including from within timers and event handlers. If a pixie function throws an exception, or if `update` returns a rejected promise, that error will also be captured and passed along to `onError`.
 
 Calling `onError` shuts down the pixie, calling its `destroy` method and preventing it from receiving further `update` calls. The next time the props change, a new pixie will be created in the destroyed pixie's place. If a pixie does not want this behavior, it should handle the error gracefully itself instead of calling `onError`.
 
@@ -77,7 +85,15 @@ Calling `onError` shuts down the pixie, calling its `destroy` method and prevent
 
 Sometimes pixies create resources that they would like to share with others. For example, one pixie might maintain a WebGL context that several other pixies might need to draw on.
 
-To do this, a pixie can call `onOutput` at any time to share some data. The latest value passed to `onOutput` becomes the pixie's output, and other pixies can see it via the `props.output` structure.
+To do this, a pixie can call `input.onOutput` at any time to share some data. The latest value passed to `onOutput` becomes the pixie's output, and other pixies can see it via the `props.output` structure.
+
+### Accessing props from event handlers
+
+Sometimes a pixie will create & manage a long-running resource with callbacks. For example, a pixie might open a WebSocket, which periodically calls the pixie back with incoming messages. To access the current props within these contexts, every pixie receives three additional helpers:
+
+* `input.props` - This property stays in-sync with the latest props, regardless of when `update` has been called.
+* `input.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
+* `input.waitFor(props => result)` - Returns a promise that resolves when the provided result is non-null, or rejects when the pixie is destroyed. This can be used to wait for outside resources to become available.
 
 <a name="managing-pixies"></a>
 ## Managing pixies
@@ -183,41 +199,6 @@ testPixie.destroy()
 
 <a name="pixie-enhancers"></a>
 ## Pixie enhancers
-
-### One-shot pixies
-
-Sometimes a pixie will create & manage a long-running resource with callbacks. For example, a pixie might open a WebSocket, which periodically calls the pixie back with incoming messages.
-
-To simplify cases like these, the `redux-pixies` libray provides a `oneShotPixie` enhancer. Passing a pixie through this function will cause its `update` function to only be called once. Instead of receiving `props`, the `update` function will receive a wrapper object with the following methods:
-
-* `wrapper.getProps()` - Returns the latest props.
-* `wrapper.nextProps()` - Returns a promise that resolves when the props change, or rejects when the pixie is destroyed.
-* `wrapper.waitFor(props => result)` - Returns a promise that resolves when the provided result is non-null, or rejects when the pixie is destroyed. This can be used to wait for outside resources to become available.
-
-This wrapper gives the pixie ongoing access to the latest props, even though `update` is only called only. Here is an example:
-
-```js
-patientPixie = oneShotPixie(({ onError }) => {
-  let socket
-
-  return {
-    // Create and subscribe to a WebSocket:
-    update (wrapper) {
-      socket = new WebSocket(wrapper.getProps().url)
-      socket.onmessage = event => wrapper.getProps().dispatch({
-        type: 'RECEIVED_SOCKET_DATA'
-        payload: event.data
-      })
-      socket.onerror = onError
-    },
-
-    // Close the WebSocket:
-    destroy () {
-      socket.close()
-    }
-  }
-})
-```
 
 ### Adding `output` to `props`
 

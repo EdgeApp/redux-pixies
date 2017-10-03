@@ -1,10 +1,12 @@
 // @flow
 import type {
-  PixieInput,
+  Condition,
   PixieInstance,
   TamePixie,
+  TamePixieInput,
   UpdateFunction,
-  WildPixie
+  WildPixie,
+  WildPixieInput
 } from '../redux-pixies.js'
 
 /**
@@ -25,22 +27,34 @@ function fixInstance<P> (
  * from running in parallel if if returns a promise.
  */
 export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
-  function outPixie (input: PixieInput) {
+  function outPixie (input: TamePixieInput) {
     let instance: PixieInstance<P> | void
     let propsCache: P
     let propsDirty: boolean = true
     let updating: boolean = false
     let destroyed: boolean = false
+    let nextPromise: Promise<P> | void
+    let rejector: ((e: any) => void) | void
+    let resolver: ((props: P) => void) | void
 
     function destroy () {
-      try {
-        const copy = instance
-        instance = void 0
-        if (copy) copy.destroy()
-      } catch (e) {
-        onError(e)
+      if (instance) {
+        try {
+          if (rejector) {
+            const copy = rejector
+            nextPromise = void 0
+            rejector = void 0
+            resolver = void 0
+            copy(new Error('Pixie has been destroyed'))
+          }
+          const copy = instance
+          instance = void 0
+          copy.destroy()
+        } catch (e) {
+          onError(e)
+        }
+        destroyed = true
       }
-      destroyed = true
     }
 
     // Ignore any callbacks once `destroy` has completed:
@@ -77,7 +91,34 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
       }
     }
 
-    const childInput: PixieInput = { onError, onOutput }
+    function getNextPromise (): Promise<P> {
+      if (!nextPromise) {
+        nextPromise = new Promise((resolve, reject) => {
+          resolver = resolve
+          rejector = reject
+        })
+      }
+      return nextPromise
+    }
+
+    const childInput: WildPixieInput<P> = {
+      onError,
+      onOutput,
+      get props () {
+        return propsCache
+      },
+      nextProps: getNextPromise,
+      waitFor<R> (condition: Condition<P, R>): Promise<R> {
+        return new Promise((resolve, reject) => {
+          function checkProps (props: P) {
+            const result = condition(props)
+            if (result != null) resolve(result)
+            else getNextPromise().then(checkProps, reject)
+          }
+          return checkProps(propsCache)
+        })
+      }
+    }
     try {
       instance = fixInstance(wildPixie(childInput))
     } catch (e) {
@@ -88,6 +129,16 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
       update (props: P) {
         propsCache = props
         propsDirty = true
+
+        // Update the `nextProps` promise right away:
+        if (resolver) {
+          const copy = resolver
+          nextPromise = void 0
+          rejector = void 0
+          resolver = void 0
+          copy(props)
+        }
+
         tryUpdate()
       },
 
@@ -102,5 +153,5 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
  * Accepts a hand-written reducer, and hardens it with error checking.
  */
 export function tamePixie<P> (pixie: WildPixie<P>): TamePixie<P> {
-  return pixie.tame ? pixie : babysitPixie(pixie)
+  return pixie.tame ? (pixie: any) : babysitPixie(pixie)
 }

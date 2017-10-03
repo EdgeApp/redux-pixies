@@ -1,11 +1,11 @@
 // @flow
+import { tamePixie } from '../enhancers/tamePixie.js'
 import type {
-  PixieInput,
   PixieInstance,
   TamePixie,
+  TamePixieInput,
   WildPixie
 } from '../redux-pixies.js'
-import { tamePixie } from '../enhancers/tamePixie.js'
 import { catchify, shallowCompare } from './util.js'
 
 /**
@@ -18,7 +18,7 @@ export function mapPixie<P, Q> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: PixieInput) {
+  function outPixie (input: TamePixieInput) {
     const { onError } = input
     let instances: { [id: string]: PixieInstance<Q> } = {}
     let outputs: { [id: string]: any } = {}

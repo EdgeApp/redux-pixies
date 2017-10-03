@@ -1,9 +1,9 @@
 // @flow
 import type {
   OnError,
-  PixieInput,
   PixieInstance,
   TamePixie,
+  TamePixieInput,
   WildPixie
 } from '../redux-pixies.js'
 import { tamePixie } from './tamePixie.js'
@@ -23,7 +23,7 @@ export function catchPixieError<P: {}> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: PixieInput) {
+  function outPixie (input: TamePixieInput) {
     const { onOutput } = input
     let instance: PixieInstance<P> | void
     let propsCache: P
@@ -43,7 +43,7 @@ export function catchPixieError<P: {}> (
       }
     }
 
-    const childInput: PixieInput = { onError, onOutput }
+    const childInput: TamePixieInput = { onError, onOutput }
 
     return {
       update (props: P) {

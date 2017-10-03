@@ -1,11 +1,11 @@
 // @flow
+import { tamePixie } from '../enhancers/tamePixie.js'
 import type {
-  PixieInput,
   PixieInstance,
   TamePixie,
+  TamePixieInput,
   WildPixie
 } from '../redux-pixies.js'
-import { tamePixie } from '../enhancers/tamePixie.js'
 import { catchify, shallowCompare } from './util.js'
 
 /**
@@ -17,7 +17,7 @@ export function filterPixie<P, Q> (
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: PixieInput) {
+  function outPixie (input: TamePixieInput) {
     const { onError, onOutput } = input
     let instance: PixieInstance<Q> | void
     let propsCache: Q | void
@@ -25,7 +25,7 @@ export function filterPixie<P, Q> (
 
     const safeFilter = catchify(filter, onError)
 
-    const childInput: PixieInput = { onError, onOutput }
+    const childInput: TamePixieInput = { onError, onOutput }
 
     return {
       update (props: P) {

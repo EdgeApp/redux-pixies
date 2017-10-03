@@ -1,11 +1,11 @@
 // @flow
+import { tamePixie } from '../enhancers/tamePixie.js'
 import type {
-  PixieInput,
   PixieInstance,
   TamePixie,
+  TamePixieInput,
   WildPixie
 } from '../redux-pixies.js'
-import { tamePixie } from '../enhancers/tamePixie.js'
 
 /**
  * Combines one or more pixies into one.
@@ -13,9 +13,9 @@ import { tamePixie } from '../enhancers/tamePixie.js'
 export function combinePixies<P> (pixieMap: {
   [id: string]: WildPixie<P>
 }): TamePixie<P> {
-  function outPixie (input: PixieInput) {
+  function outPixie (input: TamePixieInput) {
     const { onError } = input
-    const childInputs: { [id: string]: PixieInput } = {}
+    const childInputs: { [id: string]: TamePixieInput } = {}
     const instances: { [id: string]: PixieInstance<P> } = {}
     let outputs: { [id: string]: any } = {}
     let destroyed: boolean = false
