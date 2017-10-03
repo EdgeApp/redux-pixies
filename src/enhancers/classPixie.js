@@ -3,7 +3,7 @@ import type {
   OnError,
   OnOutput,
   TamePixie,
-  WildPixieInput
+  PixieInput
 } from '../redux-pixies.js'
 import { tamePixie } from './tamePixie.js'
 
@@ -38,7 +38,7 @@ export class Pixie<P> {
  * Turns a class-style pixie into a tame pixie.
  */
 export function tameClassPixie<P> (Constructor: Class<Pixie<P>>): TamePixie<P> {
-  return tamePixie(({ onError, onOutput }: WildPixieInput<P>) => {
+  return tamePixie(({ onError, onOutput }: PixieInput<P>) => {
     const callbacks: PixieCallbacks = { onError, onOutput }
     let instance: Pixie<P>
     let propsCache: P

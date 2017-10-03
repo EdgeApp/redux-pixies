@@ -1,7 +1,7 @@
 // @flow
 import { expect } from 'chai'
 import { describe, it } from 'mocha'
-import type { WildPixieInput } from '../src/redux-pixies.js'
+import type { PixieInput } from '../src/redux-pixies.js'
 import { tamePixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 
@@ -119,7 +119,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     let onEvent: (() => void) | void
 
-    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+    const testPixie = (input: PixieInput<{ x: number }>) => () => {
       if (!onEvent) onEvent = () => log(input.props)
     }
 
@@ -139,7 +139,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     let onEvent: (() => any) | void
 
-    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+    const testPixie = (input: PixieInput<{ x: number }>) => () => {
       if (!onEvent) {
         onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
       }
@@ -162,7 +162,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     let onEvent: (() => any) | void
 
-    const testPixie = (input: WildPixieInput<{ x: number }>) => () => {
+    const testPixie = (input: PixieInput<{ x: number }>) => () => {
       if (!onEvent) {
         onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
       }
@@ -184,7 +184,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     let onEvent: (() => any) | void
 
-    const testPixie = (input: WildPixieInput<{ x: number | void }>) => () => {
+    const testPixie = (input: PixieInput<{ x: number | void }>) => () => {
       if (!onEvent) {
         onEvent = () =>
           input.waitFor(props => props.x).then(p => log(p), e => log(e.name))
@@ -213,7 +213,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     let onEvent: (() => any) | void
 
-    const testPixie = (input: WildPixieInput<{ x: number | void }>) => () => {
+    const testPixie = (input: PixieInput<{ x: number | void }>) => () => {
       if (!onEvent) {
         onEvent = () =>
           input.waitFor(props => props.x).then(p => log(p), e => log(e.name))

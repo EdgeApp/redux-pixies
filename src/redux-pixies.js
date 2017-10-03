@@ -18,14 +18,14 @@ export interface TamePixieInput {
 
 export type TamePixie<P> = (input: TamePixieInput) => PixieInstance<P>
 
-export interface WildPixieInput<P> extends TamePixieInput {
+export interface PixieInput<P> extends TamePixieInput {
   nextProps(): Promise<P>,
   +props: P,
   waitFor<R>(condition: Condition<P, R>): Promise<R>
 }
 
 export type WildPixie<P> = (
-  input: WildPixieInput<P>
+  input: PixieInput<P>
 ) => PixieInstance<P> | UpdateFunction<P>
 
 // Pixie enhancers:

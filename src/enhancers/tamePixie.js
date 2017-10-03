@@ -6,7 +6,7 @@ import type {
   TamePixieInput,
   UpdateFunction,
   WildPixie,
-  WildPixieInput
+  PixieInput
 } from '../redux-pixies.js'
 
 /**
@@ -101,7 +101,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
       return nextPromise
     }
 
-    const childInput: WildPixieInput<P> = {
+    const childInput: PixieInput<P> = {
       onError,
       onOutput,
       get props () {
