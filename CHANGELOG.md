@@ -1,5 +1,11 @@
 # redux-pixies
 
+## 0.3.0
+
+* Folded the `oneShotPixie` functionality into `tamePixie`, so all pixies can access their latest props without waiting for `update`.
+* Added `isPixieShutdownError`, so pixies can determine if a `nextProps` or `waitFor` promise was rejected on shutdown.
+* Improved flow typings.
+
 ## 0.2.0
 
 * Complete re-write, which allows:
