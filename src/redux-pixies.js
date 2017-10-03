@@ -31,6 +31,7 @@ export { tamePixie } from './enhancers/tamePixie.js'
 
 // Pixie managers:
 export { attachPixie } from './managers/attachPixie.js'
+export type { ReduxProps } from './managers/attachPixie.js'
 export { startPixie } from './managers/startPixie.js'
 export { combinePixies } from './managers/combinePixies.js'
 export { filterPixie } from './managers/filterPixie.js'

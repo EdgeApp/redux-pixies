@@ -1,11 +1,4 @@
 // @flow
-import {
-  attachPixie,
-  mapPixie,
-  startPixie,
-  stopUpdates
-} from '../src/redux-pixies.js'
-import { makeAssertLog } from './assertLog.js'
 import './catchPixieError.test.js'
 import './combinePixies.test.js'
 import './filterPixie.test.js'
@@ -14,24 +7,37 @@ import './oneShotPixie.test.js'
 import './reflectPixieOutput.test.js'
 import './shallowCompare.test.js'
 import './tamePixie.test.js'
+
 import { describe, it } from 'mocha'
 import { createStore } from 'redux'
+import {
+  attachPixie,
+  mapPixie,
+  startPixie,
+  stopUpdates
+} from '../src/redux-pixies.js'
+import type { ReduxProps } from '../src/redux-pixies.js'
+import { makeAssertLog } from './assertLog.js'
 
 type Action =
   | { type: 'UPDATE', payload: { id: string, value: string } }
   | { type: 'DELETE', payload: string }
 
-function reducer (state = {}, action: Action) {
+type State = {
+  [id: string]: string
+}
+
+function reducer (state: State = {}, action: Action): State {
   switch (action.type) {
     case 'UPDATE': {
       const { id, value } = action.payload
-      const copy = { ...state }
+      const copy: State = { ...state }
       copy[id] = value
       return copy
     }
 
     case 'DELETE': {
-      const copy = { ...state }
+      const copy: State = { ...state }
       delete copy[action.payload]
       return copy
     }
@@ -61,11 +67,13 @@ describe('pixies', function () {
     }
 
     // A pure-function worker for creating & shutting down item workers.
-    interface ManagerProps { state: {} }
     const managerPixie = mapPixie(
       itemPixie,
-      (props: ManagerProps) => Object.keys(props.state),
-      (props: ManagerProps, id: string) => ({ id, value: props.state[id] })
+      (props: ReduxProps<State, Action>) => Object.keys(props.state),
+      (props: ReduxProps<State, Action>, id: string) => ({
+        id,
+        value: props.state[id]
+      })
     )
 
     // The redux store:
