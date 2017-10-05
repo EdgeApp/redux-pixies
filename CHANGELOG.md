@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.1
+
+* Fix an infinite loop in `mapPixie`
+
 ## 0.3.0
 
 * Folded the `oneShotPixie` functionality into `tamePixie`, so all pixies can access their latest props without waiting for `update`.
