@@ -46,4 +46,44 @@ describe('mapPixie', function () {
     instance.destroy()
     log.assert(['destroy'])
   })
+
+  it('handles output', function () {
+    const log = makeAssertLog()
+
+    const testPixie = ({ onOutput }) => {
+      log('create')
+      let first = true
+      return {
+        update ({ id }) {
+          if (first) {
+            first = false
+            onOutput('output ' + id)
+          }
+          log('update ' + id)
+        },
+        destroy () {
+          log('destroy')
+        }
+      }
+    }
+
+    const mappedPixie = mapPixie(
+      testPixie,
+      (props: { ids: Array<string> }) => props.ids,
+      (props: { ids: Array<string> }, id: string) => ({ id })
+    )
+    const instance = startPixie(mappedPixie, () => {}, log)
+
+    instance.update({ ids: ['a'] })
+    log.assert(['{}', 'create', 'update a', '{"a":"output a"}'])
+
+    instance.update({ ids: ['a', 'b'] })
+    log.assert(['create', 'update b', '{"a":"output a","b":"output b"}'])
+
+    instance.update({ ids: ['b'] })
+    log.assert(['destroy'])
+
+    instance.destroy()
+    log.assert(['destroy'])
+  })
 })

@@ -33,6 +33,7 @@ export function mapPixie<P, Q> (
 
     const updateOutputs = () => {
       if (outputsDirty && !updating) {
+        outputsDirty = false
         const newOutputs = {}
         for (const id of Object.keys(instances)) {
           newOutputs[id] = outputs[id]
