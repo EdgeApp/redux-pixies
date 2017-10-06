@@ -53,5 +53,6 @@ export function filterPixie<P, Q> (
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = pixie.defaultOutput
   return outPixie
 }

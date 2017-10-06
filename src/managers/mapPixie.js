@@ -99,5 +99,6 @@ export function mapPixie<P, Q> (
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = {}
   return outPixie
 }

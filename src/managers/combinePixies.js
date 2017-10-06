@@ -51,5 +51,9 @@ export function combinePixies<P> (pixieMap: {
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = {}
+  for (const id of Object.keys(pixieMap)) {
+    outPixie.defaultOutput[id] = pixieMap[id].defaultOutput
+  }
   return outPixie
 }

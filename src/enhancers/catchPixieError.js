@@ -56,5 +56,6 @@ export function catchPixieError<P: {}> (
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = pixie.defaultOutput
   return outPixie
 }

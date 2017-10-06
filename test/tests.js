@@ -7,10 +7,12 @@ import './reflectPixieOutput.test.js'
 import './shallowCompare.test.js'
 import './tamePixie.test.js'
 
+import { expect } from 'chai'
 import { describe, it } from 'mocha'
 import { createStore } from 'redux'
 import {
   attachPixie,
+  combinePixies,
   mapPixie,
   startPixie,
   stopUpdates
@@ -101,7 +103,7 @@ describe('pixies', function () {
     log.assert(['item pixie #0 destroyed', 'item pixie #2 destroyed'])
   })
 
-  it('Handles stopUpdates', function () {
+  it('handles stopUpdates', function () {
     const log = makeAssertLog(false)
     const testPixie = () => () => {
       log('called')
@@ -113,5 +115,15 @@ describe('pixies', function () {
     instance.update({})
     instance.destroy()
     log.assert(['called'])
+  })
+
+  it('provides default output', function () {
+    const testPixie = () => props => {
+      expect(props).to.deep.equal({ output: { inner: 1 } })
+    }
+    testPixie.defaultOutput = 1
+
+    const instance = startPixie(combinePixies({ inner: testPixie }))
+    instance.destroy()
   })
 })

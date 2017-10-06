@@ -156,6 +156,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = wildPixie.defaultOutput
   return outPixie
 }
 

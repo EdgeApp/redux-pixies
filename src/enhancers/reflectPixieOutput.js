@@ -16,7 +16,7 @@ export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
   function outPixie (input: TamePixieInput) {
     const { onError } = input
     let instance: PixieInstance<P> | void
-    let output: any
+    let output: any = pixie.defaultOutput
     let propsCache: P
     let propsDirty: boolean = true
     let updating: boolean = false
@@ -58,5 +58,6 @@ export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
     }
   }
   outPixie.tame = true
+  outPixie.defaultOutput = pixie.defaultOutput
   return outPixie
 }
