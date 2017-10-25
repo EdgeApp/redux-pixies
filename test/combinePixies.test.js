@@ -39,9 +39,8 @@ describe('combinePixies', function () {
     instance.update({ x: 2 })
     instance.destroy()
     log.assert([
-      'output {}',
       'update 1 {"x":2,"output":{}}',
-      'output {"testPixie1":1}',
+      'output {"testPixie1":1}', // testPixie2 is undefined, so no JSON
       'update 2 {"x":2,"output":{}}',
       'output {"testPixie1":1,"testPixie2":2}',
       'update 1 {"x":2,"output":{"testPixie1":1,"testPixie2":2}}',

@@ -13,13 +13,17 @@ import type {
 export function combinePixies<P> (pixieMap: {
   [id: string]: WildPixie<P>
 }): TamePixie<P> {
+  const defaultOutput = {}
+  for (const id of Object.keys(pixieMap)) {
+    defaultOutput[id] = pixieMap[id].defaultOutput
+  }
+
   function outPixie (input: TamePixieInput) {
     const { onError } = input
     const childInputs: { [id: string]: TamePixieInput } = {}
     const instances: { [id: string]: PixieInstance<P> } = {}
-    let outputs: { [id: string]: any } = {}
+    let outputs: { [id: string]: any } = { ...defaultOutput }
     let destroyed: boolean = false
-    input.onOutput(outputs)
 
     for (const id of Object.keys(pixieMap)) {
       const onOutput = (data: any) => {
@@ -51,9 +55,6 @@ export function combinePixies<P> (pixieMap: {
     }
   }
   outPixie.tame = true
-  outPixie.defaultOutput = {}
-  for (const id of Object.keys(pixieMap)) {
-    outPixie.defaultOutput[id] = pixieMap[id].defaultOutput
-  }
+  outPixie.defaultOutput = defaultOutput
   return outPixie
 }

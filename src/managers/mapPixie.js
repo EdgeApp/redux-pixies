@@ -26,7 +26,6 @@ export function mapPixie<P, Q> (
     const propsCache: { [id: string]: Q | void } = {}
     let updating: boolean = false
     let destroyed: boolean = false
-    input.onOutput(outputs)
 
     const safeListIds = catchify(listIds, onError)
     const safeFilter = catchify(filter, onError)

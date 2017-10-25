@@ -75,7 +75,7 @@ describe('mapPixie', function () {
     const instance = startPixie(mappedPixie, () => {}, log)
 
     instance.update({ ids: ['a'] })
-    log.assert(['{}', 'create', 'update a', '{"a":"output a"}'])
+    log.assert(['create', 'update a', '{"a":"output a"}'])
 
     instance.update({ ids: ['a', 'b'] })
     log.assert(['create', 'update b', '{"a":"output a","b":"output b"}'])
