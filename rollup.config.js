@@ -3,7 +3,10 @@ import packageJson from './package.json'
 
 const babelOpts = {
   presets: ['es2015-rollup', 'flow'],
-  plugins: ['transform-object-rest-spread']
+  plugins: [
+    'transform-object-rest-spread',
+    ['transform-es2015-for-of', { loose: true }]
+  ]
 }
 
 export default {
