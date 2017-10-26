@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.3
+
+* Fix the build to work on React Native
+
 ## 0.3.2
 
 * Provide default output, so the output tree structure is intact even at startup.
