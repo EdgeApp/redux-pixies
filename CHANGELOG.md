@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.4
+
+* Fix a condition where `waitFor` would miss updates.
+
 ## 0.3.3
 
 * Fix the build to work on React Native
