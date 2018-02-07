@@ -120,12 +120,12 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
       nextProps: getNextPromise,
       waitFor<R> (condition: Condition<P, R>): Promise<R> {
         return new Promise((resolve, reject) => {
-          function checkProps (props: P) {
-            const result = condition(props)
+          function checkProps () {
+            const result = condition(propsCache)
             if (result != null) resolve(result)
             else getNextPromise().then(checkProps, reject)
           }
-          return checkProps(propsCache)
+          return checkProps()
         })
       }
     }
