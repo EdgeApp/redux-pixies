@@ -7,7 +7,7 @@ import type {
 } from '../redux-pixies.js'
 import { tamePixie } from './tamePixie.js'
 
-export interface PixieCallbacks {
+export type PixieCallbacks = {
   onError: OnError,
   onOutput: OnOutput
 }
