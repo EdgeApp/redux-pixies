@@ -200,6 +200,7 @@ describe('tamePixie', function () {
     log.assert([]) // Promise is still waiting
 
     instance.update({ x: 2 })
+    await tinyTimeout()
     instance.update({ x: 3 })
     await tinyTimeout()
     log.assert(['2']) // Promise resolved
