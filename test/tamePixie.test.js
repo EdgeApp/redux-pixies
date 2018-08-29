@@ -233,4 +233,32 @@ describe('tamePixie', function () {
     await tinyTimeout()
     log.assert(['PixieShutdownError']) // Promise is resolved
   })
+
+  it('waitFor throws user exceptions', async function () {
+    const log = makeAssertLog()
+    let onEvent: (() => mixed) | void
+
+    const testPixie = (input: PixieInput<{ x: boolean }>) => () => {
+      if (!onEvent) {
+        onEvent = () =>
+          input
+            .waitFor(props => {
+              if (props.x) throw new Error('Boom')
+            })
+            .then(p => log(p), e => log(String(e)))
+      }
+    }
+
+    const instance = tamePixie(testPixie)({ onError, onOutput })
+
+    instance.update({ x: false })
+    log.assert([])
+    if (onEvent) onEvent()
+    await tinyTimeout()
+    log.assert([]) // Promise is still waiting
+
+    instance.update({ x: true })
+    await tinyTimeout()
+    log.assert(['Error: Boom']) // Promise rejected
+  })
 })
