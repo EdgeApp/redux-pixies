@@ -1,5 +1,11 @@
 # redux-pixies
 
+## 0.3.5
+
+* Reject the `waitFor` promise if the condition function throws.
+* Improve Flow types.
+* Fix a failing unit test, and make tests mandatory for committing.
+
 ## 0.3.4
 
 * Fix a condition where `waitFor` would miss updates.
