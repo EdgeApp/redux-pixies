@@ -1,5 +1,5 @@
 // @flow
-import { catchPixieError } from '../src/redux-pixies.js'
+import { catchPixieError } from '../src/index.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 

@@ -4,7 +4,7 @@ import type {
   TamePixie,
   TamePixieInput,
   WildPixie
-} from '../redux-pixies.js'
+} from '../index.js'
 import { tamePixie } from './tamePixie.js'
 
 /**

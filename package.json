@@ -14,8 +14,8 @@
     "url": "git@github.com:Airbitz/redux-pixies.git"
   },
   "license": "MIT",
-  "main": "lib/redux-pixies.js",
-  "module": "lib/redux-pixies.es.js",
+  "main": "lib/redux-pixies.cjs.js",
+  "module": "lib/redux-pixies.js",
   "files": [
     "CHANGELOG.md",
     "README.md",

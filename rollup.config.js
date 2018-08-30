@@ -11,7 +11,7 @@ const babelOpts = {
 }
 
 export default {
-  input: 'src/redux-pixies.js',
+  input: 'src/index.js',
   output: [
     { file: packageJson.main, format: 'cjs' },
     { file: packageJson.module, format: 'es' }
