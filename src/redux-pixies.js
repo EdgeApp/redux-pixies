@@ -6,19 +6,19 @@ export type DestroyFunction = () => void
 
 export type Condition<P, R> = (props: P) => R | void
 
-export interface PixieInstance<P> {
+export type PixieInstance<P> = {
   update(props: P): any,
   destroy(): void
 }
 
-export interface TamePixieInput {
+export type TamePixieInput = {
   onError: OnError,
   onOutput: OnOutput
 }
 
 export type TamePixie<P> = (input: TamePixieInput) => PixieInstance<P>
 
-export interface PixieInput<P> extends TamePixieInput {
+export type PixieInput<P> = TamePixieInput & {
   nextProps(): Promise<P>,
   +props: P,
   waitFor<R>(condition: Condition<P, R>): Promise<R>

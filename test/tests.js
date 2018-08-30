@@ -51,7 +51,7 @@ describe('pixies', function () {
     const log = makeAssertLog(true)
 
     // A worker with some logging side effects.
-    interface ItemProps { id: string, value: string }
+    type ItemProps = { id: string, value: string }
     let itemCount = 0
     function itemPixie () {
       const index = itemCount++

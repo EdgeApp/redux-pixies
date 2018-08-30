@@ -28,9 +28,9 @@
     "flow": "flow status",
     "format": "prettier --write '*.js' 'src/**/*.js' 'test/**/*.js' && eslint --fix '*.js' 'src/**/*.js' 'test/**/*.js'",
     "lint": "eslint '*.js' 'src/**/*.js' 'test/**/*.js'",
-    "precommit": "npm run lint && npm run build",
+    "precommit": "npm run lint && npm run test && npm run build",
     "prepare": "npm run build",
-    "pretest": "npm run lint && npm run build:test",
+    "pretest": "npm run build:test",
     "test": "mocha --require source-map-support/register build/tests.js"
   },
   "devDependencies": {
