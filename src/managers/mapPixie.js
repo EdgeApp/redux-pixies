@@ -81,7 +81,10 @@ export function mapPixie<P, Q> (
         // Destroy any old instances that are not on the list.
         // We need to finish this even if it triggers `destroyed`:
         for (const id of Object.keys(oldInstances)) {
-          if (!newInstances[id]) oldInstances[id].destroy()
+          if (!newInstances[id]) {
+            outputsDirty = true
+            oldInstances[id].destroy()
+          }
         }
         if (destroyed) return
 

@@ -81,7 +81,7 @@ describe('mapPixie', function () {
     log.assert(['create', 'update b', '{"a":"output a","b":"output b"}'])
 
     instance.update({ ids: ['b'] })
-    log.assert(['destroy'])
+    log.assert(['destroy', '{"b":"output b"}'])
 
     instance.destroy()
     log.assert(['destroy'])
