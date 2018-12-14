@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.6
+
+* Fix a bug where `mapPixies` wasn't removing the outputs for its destroyed children.
+
 ## 0.3.5
 
 * Reject the `waitFor` promise if the condition function throws.

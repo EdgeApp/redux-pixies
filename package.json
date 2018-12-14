@@ -1,6 +1,6 @@
 {
   "name": "redux-pixies",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "The magical asynchronous Redux library",
   "license": "MIT",
   "keywords": [
