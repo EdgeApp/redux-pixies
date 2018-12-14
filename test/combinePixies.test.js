@@ -1,5 +1,5 @@
 // @flow
-import { combinePixies, startPixie } from '../src/redux-pixies.js'
+import { combinePixies, startPixie } from '../src/index.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'
 

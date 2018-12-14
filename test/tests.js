@@ -16,8 +16,8 @@ import {
   mapPixie,
   startPixie,
   stopUpdates
-} from '../src/redux-pixies.js'
-import type { ReduxProps } from '../src/redux-pixies.js'
+} from '../src/index.js'
+import type { ReduxProps } from '../src/index.js'
 import { makeAssertLog } from './assertLog.js'
 
 type Action =

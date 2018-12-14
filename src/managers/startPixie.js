@@ -4,7 +4,7 @@ import type {
   OnOutput,
   PixieInstance,
   WildPixie
-} from '../redux-pixies.js'
+} from '../index.js'
 import { catchPixieError } from '../enhancers/catchPixieError.js'
 import { reflectPixieOutput } from '../enhancers/reflectPixieOutput.js'
 

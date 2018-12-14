@@ -7,7 +7,7 @@ import type {
   UpdateFunction,
   WildPixie,
   PixieInput
-} from '../redux-pixies.js'
+} from '../index.js'
 
 function makePixieShutdownError () {
   const e = new Error('Pixie has been destroyed')

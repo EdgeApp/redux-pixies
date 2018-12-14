@@ -14,16 +14,17 @@
     "CHANGELOG.md",
     "README.md",
     "lib/*",
+    "src/*",
     "package.json"
   ],
-  "main": "lib/redux-pixies.js",
-  "module": "lib/redux-pixies.es.js",
+  "main": "lib/redux-pixies.cjs.js",
+  "module": "lib/redux-pixies.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:Airbitz/redux-pixies.git"
   },
   "scripts": {
-    "build": "rollup -c && flow-copy-source src lib",
+    "build": "rollup -c ",
     "build:test": "rollup -c rollup.config.test.js",
     "flow": "flow status",
     "format": "prettier --write '*.js' 'src/**/*.js' 'test/**/*.js' && eslint --fix '*.js' 'src/**/*.js' 'test/**/*.js'",
@@ -48,13 +49,13 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "flow-bin": "^0.54.1",
-    "flow-copy-source": "^1.2.1",
     "flow-typed": "^2.1.5",
     "husky": "^0.14.3",
     "mocha": "^3.5.0",
     "redux": "^3.7.2",
     "rollup": "^0.49.2",
     "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-flow-entry": "^0.2.0",
     "source-map-support": "^0.4.17"
   },
   "dependencies": {}

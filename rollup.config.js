@@ -1,4 +1,5 @@
 import babel from 'rollup-plugin-babel'
+import flowEntry from 'rollup-plugin-flow-entry'
 import packageJson from './package.json'
 
 const babelOpts = {
@@ -10,11 +11,11 @@ const babelOpts = {
 }
 
 export default {
-  input: 'src/redux-pixies.js',
+  input: 'src/index.js',
   output: [
     { file: packageJson.main, format: 'cjs' },
     { file: packageJson.module, format: 'es' }
   ],
-  plugins: [babel(babelOpts)],
+  plugins: [babel(babelOpts), flowEntry()],
   sourcemap: true
 }

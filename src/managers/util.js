@@ -1,5 +1,5 @@
 // @flow
-import type { OnError } from '../redux-pixies.js'
+import type { OnError } from '../index.js'
 
 /**
  * If the function throws, send that through `onError`.

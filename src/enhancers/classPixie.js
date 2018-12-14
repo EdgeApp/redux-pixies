@@ -4,7 +4,7 @@ import type {
   OnOutput,
   TamePixie,
   PixieInput
-} from '../redux-pixies.js'
+} from '../index.js'
 import { tamePixie } from './tamePixie.js'
 
 export type PixieCallbacks = {

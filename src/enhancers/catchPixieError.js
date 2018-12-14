@@ -5,7 +5,7 @@ import type {
   TamePixie,
   TamePixieInput,
   WildPixie
-} from '../redux-pixies.js'
+} from '../index.js'
 import { tamePixie } from './tamePixie.js'
 
 type ErrorHandler<P> = (e: any, props: P, onError: OnError) => void
