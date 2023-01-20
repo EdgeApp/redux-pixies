@@ -16,11 +16,13 @@
   "license": "MIT",
   "main": "lib/redux-pixies.js",
   "module": "lib/redux-pixies.es.js",
+  "types": "src/redux-pixies.d.ts",
   "files": [
-    "CHANGELOG.md",
-    "README.md",
-    "lib/*",
-    "package.json"
+    "/CHANGELOG.md",
+    "/README.md",
+    "/lib/",
+    "/src/redux-pixies.d.ts",
+    "/package.json"
   ],
   "scripts": {
     "build:test": "rollup -c rollup.config.test.js",
@@ -34,10 +36,12 @@
     "test": "mocha --require source-map-support/register build/tests.js"
   },
   "lint-staged": {
-    "*.js": "eslint"
+    "*.{js,ts}": "eslint"
   },
   "dependencies": {},
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.8.2",
+    "@typescript-eslint/parser": "^4.8.2",
     "babel-core": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -61,6 +65,7 @@
     "redux": "^3.7.2",
     "rollup": "^0.49.2",
     "rollup-plugin-babel": "^3.0.2",
-    "source-map-support": "^0.4.17"
+    "source-map-support": "^0.4.17",
+    "typescript": "~4.1.2"
   }
 }
