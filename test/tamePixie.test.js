@@ -1,8 +1,8 @@
 // @flow
 import { expect } from 'chai'
 import { describe, it } from 'mocha'
-import type { PixieInput } from '../src/redux-pixies.js'
-import { tamePixie } from '../src/redux-pixies.js'
+import type { PixieInput } from '../src/index.js'
+import { tamePixie } from '../src/index.js'
 import { makeAssertLog } from './assertLog.js'
 
 function onError () {}
