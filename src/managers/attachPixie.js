@@ -22,14 +22,14 @@ export function attachPixie<S, A> (
   const instance = startPixie(pixie, onError, onOutput)
   instance.update({
     dispatch: store.dispatch,
-    output: void 0,
+    output: undefined,
     state: store.getState()
   })
 
   const unsubscribe = store.subscribe(() => {
     instance.update({
       dispatch: store.dispatch,
-      output: void 0,
+      output: undefined,
       state: store.getState()
     })
   })

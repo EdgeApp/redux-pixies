@@ -31,7 +31,7 @@ export function catchPixieError<P: {}> (
 
     const destroy = () => {
       const copy = instance
-      instance = void 0
+      instance = undefined
       if (copy) copy.destroy()
     }
 

@@ -194,7 +194,7 @@ describe('tamePixie', function () {
 
     const instance = tamePixie(testPixie)({ onError, onOutput })
 
-    instance.update({ x: void 0 })
+    instance.update({ x: undefined })
     log.assert([])
     if (onEvent) onEvent()
     await tinyTimeout()
@@ -224,7 +224,7 @@ describe('tamePixie', function () {
 
     const instance = tamePixie(testPixie)({ onError, onOutput })
 
-    instance.update({ x: void 0 })
+    instance.update({ x: undefined })
     log.assert([])
     if (onEvent) onEvent()
     await tinyTimeout()

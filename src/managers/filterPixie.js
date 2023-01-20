@@ -42,14 +42,14 @@ export function filterPixie<P, Q> (
           if (dirty) instance.update(innerProps)
         } else {
           if (instance) instance.destroy()
-          instance = void 0
+          instance = undefined
         }
       },
 
       destroy () {
         destroyed = true
         if (instance) instance.destroy()
-        instance = void 0
+        instance = undefined
       }
     }
   }

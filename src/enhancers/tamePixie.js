@@ -53,13 +53,13 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
         try {
           if (rejector) {
             const copy = rejector
-            nextPromise = void 0
-            rejector = void 0
-            resolver = void 0
+            nextPromise = undefined
+            rejector = undefined
+            resolver = undefined
             copy(makePixieShutdownError())
           }
           const copy = instance
-          instance = void 0
+          instance = undefined
           copy.destroy()
         } catch (e) {
           onError(e)
@@ -148,9 +148,9 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
         // Update the `nextProps` promise right away:
         if (resolver) {
           const copy = resolver
-          nextPromise = void 0
-          rejector = void 0
-          resolver = void 0
+          nextPromise = undefined
+          rejector = undefined
+          resolver = undefined
           copy(props)
         }
 

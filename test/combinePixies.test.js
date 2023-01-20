@@ -34,7 +34,7 @@ describe('combinePixies', function () {
         testPixie1,
         testPixie2
       }),
-      void 0,
+      undefined,
       onOutput
     )
     instance.update({ x: 2 })

@@ -53,7 +53,7 @@ export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
 
       destroy () {
         const copy = instance
-        instance = void 0
+        instance = undefined
         if (copy) copy.destroy()
       }
     }
