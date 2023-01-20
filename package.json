@@ -2,7 +2,6 @@
   "name": "redux-pixies",
   "version": "0.3.6",
   "description": "The magical asynchronous Redux library",
-  "license": "MIT",
   "keywords": [
     "asynchronous",
     "declarative",
@@ -10,18 +9,19 @@
     "redux",
     "side-effects"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Airbitz/redux-pixies.git"
+  },
+  "license": "MIT",
+  "main": "lib/redux-pixies.js",
+  "module": "lib/redux-pixies.es.js",
   "files": [
     "CHANGELOG.md",
     "README.md",
     "lib/*",
     "package.json"
   ],
-  "main": "lib/redux-pixies.js",
-  "module": "lib/redux-pixies.es.js",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:Airbitz/redux-pixies.git"
-  },
   "scripts": {
     "build": "rollup -c && flow-copy-source src lib",
     "build:test": "rollup -c rollup.config.test.js",
@@ -33,6 +33,7 @@
     "pretest": "npm run build:test",
     "test": "mocha --require source-map-support/register build/tests.js"
   },
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
@@ -56,6 +57,5 @@
     "rollup": "^0.49.2",
     "rollup-plugin-babel": "^3.0.2",
     "source-map-support": "^0.4.17"
-  },
-  "dependencies": {}
+  }
 }
