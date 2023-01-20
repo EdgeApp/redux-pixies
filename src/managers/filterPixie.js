@@ -12,13 +12,13 @@ import { catchify, shallowCompare } from './util.js'
 /**
  * Filters the props going into a pixie.
  */
-export function filterPixie<P, Q> (
+export function filterPixie<P, Q>(
   pixie: WildPixie<Q>,
   filter: (props: P) => Q | void
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: TamePixieInput) {
+  function outPixie(input: TamePixieInput) {
     const { onError, onOutput } = input
     let instance: PixieInstance<Q> | void
     let propsCache: Q | void
@@ -29,7 +29,7 @@ export function filterPixie<P, Q> (
     const childInput: TamePixieInput = { onError, onOutput }
 
     return {
-      update (props: P) {
+      update(props: P) {
         const innerProps = safeFilter(props)
         if (destroyed) return
         const dirty = !shallowCompare(innerProps, propsCache)
@@ -46,7 +46,7 @@ export function filterPixie<P, Q> (
         }
       },
 
-      destroy () {
+      destroy() {
         destroyed = true
         if (instance) instance.destroy()
         instance = undefined

@@ -11,6 +11,8 @@ import './tamePixie.test.js'
 import { expect } from 'chai'
 import { describe, it } from 'mocha'
 import { createStore } from 'redux'
+
+import type { ReduxProps } from '../src/redux-pixies.js'
 import {
   attachPixie,
   combinePixies,
@@ -18,7 +20,6 @@ import {
   startPixie,
   stopUpdates
 } from '../src/redux-pixies.js'
-import type { ReduxProps } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 
 type Action =
@@ -29,7 +30,7 @@ type State = {
   [id: string]: string
 }
 
-function reducer (state: State = {}, action: Action): State {
+function reducer(state: State = {}, action: Action): State {
   switch (action.type) {
     case 'UPDATE': {
       const { id, value } = action.payload
@@ -54,15 +55,15 @@ describe('pixies', function () {
     // A worker with some logging side effects.
     type ItemProps = { id: string, value: string }
     let itemCount = 0
-    function itemPixie () {
+    function itemPixie() {
       const index = itemCount++
       log(`item pixie #${index} created`)
 
       return {
-        update ({ id, value }: ItemProps) {
+        update({ id, value }: ItemProps) {
           log(`item pixie #${index} updated ${id} = ${value}`)
         },
-        destroy () {
+        destroy() {
           log(`item pixie #${index} destroyed`)
         }
       }

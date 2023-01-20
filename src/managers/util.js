@@ -5,7 +5,7 @@ import type { OnError } from '../redux-pixies.js'
 /**
  * If the function throws, send that through `onError`.
  */
-export function catchify<R> (
+export function catchify<R>(
   f: (...args: any) => R,
   onError: OnError
 ): (...args: any) => R | void {
@@ -21,7 +21,7 @@ export function catchify<R> (
 /**
  * Returns true if two Javascript values are equal (non-recursively).
  */
-export function shallowCompare<A, B> (a: A, b: B): boolean {
+export function shallowCompare<A, B>(a: A, b: B): boolean {
   if (a === b) return true
 
   // Fast path for primitives:

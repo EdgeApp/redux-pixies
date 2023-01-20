@@ -11,10 +11,10 @@ import { tamePixie } from './tamePixie.js'
 /**
  * Copies the `output` back into the pixie as a prop.
  */
-export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
+export function reflectPixieOutput<P: {}>(pixie: WildPixie<P>): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: TamePixieInput) {
+  function outPixie(input: TamePixieInput) {
     const { onError } = input
     let instance: PixieInstance<P> | void
     let output: any = pixie.defaultOutput
@@ -44,14 +44,14 @@ export function reflectPixieOutput<P: {}> (pixie: WildPixie<P>): TamePixie<P> {
 
     const childInput: TamePixieInput = { onError, onOutput }
     return {
-      update (props: P) {
+      update(props: P) {
         propsCache = props
         propsDirty = true
         if (!instance) instance = tamedPixie(childInput)
         tryUpdate()
       },
 
-      destroy () {
+      destroy() {
         const copy = instance
         instance = undefined
         if (copy) copy.destroy()

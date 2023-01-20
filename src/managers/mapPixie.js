@@ -12,14 +12,14 @@ import { catchify, shallowCompare } from './util.js'
 /**
  * Combines one or more pixies into one, using a list of keys.
  */
-export function mapPixie<P, Q> (
+export function mapPixie<P, Q>(
   pixie: WildPixie<Q>,
-  listIds: (props: P) => Array<string>,
+  listIds: (props: P) => string[],
   filter: (props: P, id: string) => Q | void
 ): TamePixie<P> {
   const tamedPixie = tamePixie(pixie)
 
-  function outPixie (input: TamePixieInput) {
+  function outPixie(input: TamePixieInput) {
     const { onError } = input
     let instances: { [id: string]: PixieInstance<Q> } = {}
     let outputs: { [id: string]: any } = {}
@@ -44,7 +44,7 @@ export function mapPixie<P, Q> (
     }
 
     return {
-      update (outerProps: P) {
+      update(outerProps: P) {
         const ids = safeListIds(outerProps)
         if (destroyed || !ids) return
 
@@ -93,7 +93,7 @@ export function mapPixie<P, Q> (
         updateOutputs()
       },
 
-      destroy () {
+      destroy() {
         destroyed = true
         for (const id of Object.keys(instances)) {
           if (instances[id]) instances[id].destroy()

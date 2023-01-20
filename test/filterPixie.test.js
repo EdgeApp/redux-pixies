@@ -1,8 +1,9 @@
 // @flow
 
+import { describe, it } from 'mocha'
+
 import { filterPixie, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
-import { describe, it } from 'mocha'
 
 describe('filterPixie', function () {
   it('basic operation', function () {
@@ -11,10 +12,10 @@ describe('filterPixie', function () {
     const testPixie = () => {
       log('create')
       return {
-        update (props: {}) {
+        update(props: {}) {
           log('update ' + JSON.stringify(props))
         },
-        destroy () {
+        destroy() {
           log('destroy')
         }
       }

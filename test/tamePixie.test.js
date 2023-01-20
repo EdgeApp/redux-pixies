@@ -2,14 +2,15 @@
 
 import { expect } from 'chai'
 import { describe, it } from 'mocha'
+
 import type { PixieInput } from '../src/redux-pixies.js'
 import { tamePixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 
-function onError () {}
-function onOutput () {}
+function onError() {}
+function onOutput() {}
 
-function tinyTimeout () {
+function tinyTimeout() {
   return new Promise(resolve => setTimeout(resolve, 1))
 }
 
@@ -32,7 +33,7 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     const onError = e => log(e.message)
 
-    function badPixie () {
+    function badPixie() {
       throw new Error('create')
     }
 
@@ -48,12 +49,12 @@ describe('tamePixie', function () {
     const log = makeAssertLog()
     const onError = e => log(e.message)
 
-    function badPixie () {
+    function badPixie() {
       return {
-        update (props: {}) {
+        update(props: {}) {
           throw new Error('update')
         },
-        destroy () {
+        destroy() {
           throw new Error('destroy')
         }
       }
@@ -142,7 +143,11 @@ describe('tamePixie', function () {
 
     const testPixie = (input: PixieInput<{ x: number }>) => () => {
       if (!onEvent) {
-        onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
+        onEvent = () =>
+          input.nextProps().then(
+            p => log(p),
+            e => log(e.name)
+          )
       }
     }
 
@@ -165,7 +170,11 @@ describe('tamePixie', function () {
 
     const testPixie = (input: PixieInput<{ x: number }>) => () => {
       if (!onEvent) {
-        onEvent = () => input.nextProps().then(p => log(p), e => log(e.name))
+        onEvent = () =>
+          input.nextProps().then(
+            p => log(p),
+            e => log(e.name)
+          )
       }
     }
 
@@ -188,7 +197,12 @@ describe('tamePixie', function () {
     const testPixie = (input: PixieInput<{ x: number | void }>) => () => {
       if (!onEvent) {
         onEvent = () =>
-          input.waitFor(props => props.x).then(p => log(p), e => log(e.name))
+          input
+            .waitFor(props => props.x)
+            .then(
+              p => log(p),
+              e => log(e.name)
+            )
       }
     }
 
@@ -218,7 +232,12 @@ describe('tamePixie', function () {
     const testPixie = (input: PixieInput<{ x: number | void }>) => () => {
       if (!onEvent) {
         onEvent = () =>
-          input.waitFor(props => props.x).then(p => log(p), e => log(e.name))
+          input
+            .waitFor(props => props.x)
+            .then(
+              p => log(p),
+              e => log(e.name)
+            )
       }
     }
 
@@ -246,7 +265,10 @@ describe('tamePixie', function () {
             .waitFor(props => {
               if (props.x) throw new Error('Boom')
             })
-            .then(p => log(p), e => log(String(e)))
+            .then(
+              p => log(p),
+              e => log(String(e))
+            )
       }
     }
 

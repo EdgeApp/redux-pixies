@@ -2,7 +2,7 @@
 
 import { assert as chaiAssert } from 'chai'
 
-function stringify (...args: Array<mixed>) {
+function stringify(...args: mixed[]) {
   return args
     .map(arg => {
       if (arg == null) return typeof arg
@@ -16,19 +16,16 @@ function stringify (...args: Array<mixed>) {
  * Asserts that the correct events have occurred.
  * Used for testing callbacks.
  */
-export function makeAssertLog (
-  sort: boolean = false,
-  verbose: boolean = false
-) {
-  let events: Array<string> = []
+export function makeAssertLog(sort: boolean = false, verbose: boolean = false) {
+  let events: string[] = []
 
-  const out = function log (...args: Array<mixed>) {
+  const out = function log(...args: mixed[]) {
     const event = stringify(...args)
     if (verbose) console.log(event)
     events.push(event)
   }
 
-  out.assert = function assert (expected: Array<string>) {
+  out.assert = function assert(expected: string[]) {
     sort
       ? chaiAssert.deepEqual(events.sort(), expected.sort())
       : chaiAssert.deepEqual(events, expected)

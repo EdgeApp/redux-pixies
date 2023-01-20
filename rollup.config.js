@@ -1,4 +1,5 @@
 import babel from 'rollup-plugin-babel'
+
 import packageJson from './package.json'
 
 const babelOpts = {

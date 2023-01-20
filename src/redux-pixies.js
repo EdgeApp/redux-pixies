@@ -49,4 +49,4 @@ export type { PixieCallbacks } from './enhancers/classPixie.js'
 /**
  * Update functions can return this to stop all future updates.
  */
-export const stopUpdates = { then () {} }
+export const stopUpdates = { then() {} }

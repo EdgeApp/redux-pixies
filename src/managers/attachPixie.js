@@ -1,8 +1,9 @@
 // @flow
 
+import type { Dispatch, Store } from 'redux'
+
 import type { OnError, OnOutput, WildPixie } from '../redux-pixies.js'
 import { startPixie } from './startPixie.js'
-import type { Store, Dispatch } from 'redux'
 
 export type ReduxProps<S, A> = {
   dispatch: Dispatch<A>,
@@ -13,7 +14,7 @@ export type ReduxProps<S, A> = {
 /**
  * Instantiates a pixie object and attaches it to a redux store.
  */
-export function attachPixie<S, A> (
+export function attachPixie<S, A>(
   store: Store<S, A>,
   pixie: WildPixie<ReduxProps<S, A>>,
   onError?: OnError,

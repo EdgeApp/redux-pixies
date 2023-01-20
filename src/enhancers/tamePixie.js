@@ -2,32 +2,32 @@
 
 import type {
   Condition,
+  PixieInput,
   PixieInstance,
   TamePixie,
   TamePixieInput,
   UpdateFunction,
-  WildPixie,
-  PixieInput
+  WildPixie
 } from '../redux-pixies.js'
 
-function makePixieShutdownError () {
+function makePixieShutdownError() {
   const e = new Error('Pixie has been destroyed')
   e.name = 'PixieShutdownError'
   return e
 }
 
-export function isPixieShutdownError (e: any) {
+export function isPixieShutdownError(e: any) {
   return e instanceof Error && e.name === 'PixieShutdownError'
 }
 
 /**
  * If a wild pixie returns a bare function, turn that into a proper object.
  */
-function fixInstance<P> (
+function fixInstance<P>(
   instance: PixieInstance<P> | UpdateFunction<P>
 ): PixieInstance<P> {
   if (typeof instance === 'function') {
-    return { update: instance, destroy () {} }
+    return { update: instance, destroy() {} }
   }
   return instance
 }
@@ -37,8 +37,8 @@ function fixInstance<P> (
  * terminating the inner pixie in response. Also prevents `update`
  * from running in parallel if if returns a promise.
  */
-export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
-  function outPixie (input: TamePixieInput) {
+export function babysitPixie<P>(wildPixie: WildPixie<P>): TamePixie<P> {
+  function outPixie(input: TamePixieInput) {
     let instance: PixieInstance<P> | void
     let propsCache: P
     let propsDirty: boolean = true
@@ -48,7 +48,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     let rejector: ((e: any) => void) | void
     let resolver: ((props: P) => void) | void
 
-    function destroy () {
+    function destroy() {
       if (instance) {
         try {
           if (rejector) {
@@ -69,21 +69,21 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     }
 
     // Ignore any callbacks once `destroy` has completed:
-    function onError (e: Error) {
+    function onError(e: Error) {
       if (!destroyed) input.onError(e)
       destroy()
     }
 
-    function onOutput (data: any) {
+    function onOutput(data: any) {
       if (!destroyed) input.onOutput(data)
     }
 
-    function onUpdateDone () {
+    function onUpdateDone() {
       updating = false
       tryUpdate()
     }
 
-    function tryUpdate () {
+    function tryUpdate() {
       // eslint-disable-next-line no-unmodified-loop-condition
       while (instance && propsDirty && !updating) {
         propsDirty = false
@@ -102,7 +102,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
       }
     }
 
-    function getNextPromise (): Promise<P> {
+    function getNextPromise(): Promise<P> {
       if (!nextPromise) {
         nextPromise = new Promise((resolve, reject) => {
           resolver = resolve
@@ -115,13 +115,13 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     const childInput: PixieInput<P> = {
       onError,
       onOutput,
-      get props () {
+      get props() {
         return propsCache
       },
       nextProps: getNextPromise,
-      waitFor<R> (condition: Condition<P, R>): Promise<R> {
+      waitFor<R>(condition: Condition<P, R>): Promise<R> {
         return new Promise((resolve, reject) => {
-          function checkProps () {
+          function checkProps() {
             try {
               const result = condition(propsCache)
               if (result != null) resolve(result)
@@ -141,7 +141,7 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
     }
 
     return {
-      update (props: P) {
+      update(props: P) {
         propsCache = props
         propsDirty = true
 
@@ -168,6 +168,6 @@ export function babysitPixie<P> (wildPixie: WildPixie<P>): TamePixie<P> {
 /**
  * Accepts a hand-written reducer, and hardens it with error checking.
  */
-export function tamePixie<P> (pixie: WildPixie<P>): TamePixie<P> {
+export function tamePixie<P>(pixie: WildPixie<P>): TamePixie<P> {
   return pixie.tame ? (pixie: any) : babysitPixie(pixie)
 }
