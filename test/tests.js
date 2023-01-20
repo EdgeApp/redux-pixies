@@ -1,4 +1,5 @@
 // @flow
+
 import './catchPixieError.test.js'
 import './combinePixies.test.js'
 import './filterPixie.test.js'

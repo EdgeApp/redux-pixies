@@ -1,4 +1,5 @@
 // @flow
+
 import { tamePixie } from '../enhancers/tamePixie.js'
 import type {
   PixieInstance,

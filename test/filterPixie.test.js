@@ -1,4 +1,5 @@
 // @flow
+
 import { filterPixie, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
 import { describe, it } from 'mocha'

@@ -1,4 +1,5 @@
 // @flow
+
 export type OnError = (e: any) => void
 export type OnOutput = (data: any) => void
 export type UpdateFunction<P> = (props: P) => any
