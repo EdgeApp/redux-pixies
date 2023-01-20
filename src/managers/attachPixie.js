@@ -2,7 +2,7 @@
 
 import type { Dispatch, Store } from 'redux'
 
-import type { OnError, OnOutput, WildPixie } from '../redux-pixies.js'
+import type { OnError, OnOutput, WildPixie } from '../types.js'
 import { startPixie } from './startPixie.js'
 
 export type ReduxProps<S, A> = {

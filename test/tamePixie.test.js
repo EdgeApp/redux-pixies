@@ -3,8 +3,8 @@
 import { expect } from 'chai'
 import { describe, it } from 'mocha'
 
-import type { PixieInput } from '../src/redux-pixies.js'
 import { tamePixie } from '../src/redux-pixies.js'
+import type { PixieInput } from '../src/types.js'
 import { makeAssertLog } from './assertLog.js'
 
 function onError() {}

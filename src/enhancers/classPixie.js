@@ -1,11 +1,6 @@
 // @flow
 
-import type {
-  OnError,
-  OnOutput,
-  PixieInput,
-  TamePixie
-} from '../redux-pixies.js'
+import type { OnError, OnOutput, PixieInput, TamePixie } from '../types.js'
 import { tamePixie } from './tamePixie.js'
 
 export type PixieCallbacks = {

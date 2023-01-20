@@ -6,7 +6,7 @@ import type {
   TamePixie,
   TamePixieInput,
   WildPixie
-} from '../redux-pixies.js'
+} from '../types.js'
 
 /**
  * Combines one or more pixies into one.
