@@ -1,16 +1,17 @@
 // @flow
+
 import { tamePixie } from '../enhancers/tamePixie.js'
 import type {
   PixieInstance,
   TamePixie,
   TamePixieInput,
   WildPixie
-} from '../redux-pixies.js'
+} from '../types.js'
 
 /**
  * Combines one or more pixies into one.
  */
-export function combinePixies<P> (pixieMap: {
+export function combinePixies<P>(pixieMap: {
   [id: string]: WildPixie<P>
 }): TamePixie<P> {
   const defaultOutput = {}
@@ -18,7 +19,7 @@ export function combinePixies<P> (pixieMap: {
     defaultOutput[id] = pixieMap[id].defaultOutput
   }
 
-  function outPixie (input: TamePixieInput) {
+  function outPixie(input: TamePixieInput) {
     const { onError } = input
     const childInputs: { [id: string]: TamePixieInput } = {}
     const instances: { [id: string]: PixieInstance<P> } = {}
@@ -39,14 +40,14 @@ export function combinePixies<P> (pixieMap: {
     }
 
     return {
-      update (props: P) {
+      update(props: P) {
         for (const id of Object.keys(instances)) {
           instances[id].update(props)
           if (destroyed) return
         }
       },
 
-      destroy () {
+      destroy() {
         destroyed = true
         for (const id of Object.keys(instances)) {
           instances[id].destroy()

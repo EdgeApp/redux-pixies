@@ -1,7 +1,9 @@
 // @flow
+
+import { describe, it } from 'mocha'
+
 import { combinePixies, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
-import { describe, it } from 'mocha'
 
 describe('combinePixies', function () {
   it('basic operation', function () {
@@ -9,21 +11,21 @@ describe('combinePixies', function () {
     const onOutput = data => log('output ' + JSON.stringify(data))
 
     const testPixie1 = ({ onError, onOutput }) => ({
-      update (props: {}) {
+      update(props: {}) {
         log('update 1 ' + JSON.stringify(props))
         onOutput(1)
       },
-      destroy () {
+      destroy() {
         log('destroy 1')
       }
     })
 
     const testPixie2 = ({ onError, onOutput }) => ({
-      update (props: {}) {
+      update(props: {}) {
         log('update 2 ' + JSON.stringify(props))
         onOutput(2)
       },
-      destroy () {
+      destroy() {
         log('destroy 2')
       }
     })
@@ -33,7 +35,7 @@ describe('combinePixies', function () {
         testPixie1,
         testPixie2
       }),
-      void 0,
+      undefined,
       onOutput
     )
     instance.update({ x: 2 })

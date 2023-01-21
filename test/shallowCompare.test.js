@@ -1,6 +1,7 @@
-import { shallowCompare } from '../src/managers/util.js'
 import { assert } from 'chai'
 import { describe, it } from 'mocha'
+
+import { shallowCompare } from '../src/managers/util.js'
 
 describe('shallow compare', function () {
   it('compares values', function () {

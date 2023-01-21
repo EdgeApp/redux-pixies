@@ -1,7 +1,9 @@
 // @flow
+
+import { describe, it } from 'mocha'
+
 import { mapPixie, startPixie } from '../src/redux-pixies.js'
 import { makeAssertLog } from './assertLog.js'
-import { describe, it } from 'mocha'
 
 describe('mapPixie', function () {
   it('basic operation', function () {
@@ -10,10 +12,10 @@ describe('mapPixie', function () {
     const testPixie = () => {
       log('create')
       return {
-        update (props: {}) {
+        update(props: {}) {
           log('update ' + JSON.stringify(props))
         },
-        destroy () {
+        destroy() {
           log('destroy')
         }
       }
@@ -21,8 +23,8 @@ describe('mapPixie', function () {
 
     const mappedPixie = mapPixie(
       testPixie,
-      (props: { ids: Array<string> }) => props.ids,
-      (props: { ids: Array<string> }, id: string) => {
+      (props: { ids: string[] }) => props.ids,
+      (props: { ids: string[] }, id: string) => {
         if (id > '2') return { id }
       }
     )
@@ -54,14 +56,14 @@ describe('mapPixie', function () {
       log('create')
       let first = true
       return {
-        update ({ id }) {
+        update({ id }) {
           if (first) {
             first = false
             onOutput('output ' + id)
           }
           log('update ' + id)
         },
-        destroy () {
+        destroy() {
           log('destroy')
         }
       }
@@ -69,8 +71,8 @@ describe('mapPixie', function () {
 
     const mappedPixie = mapPixie(
       testPixie,
-      (props: { ids: Array<string> }) => props.ids,
-      (props: { ids: Array<string> }, id: string) => ({ id })
+      (props: { ids: string[] }) => props.ids,
+      (props: { ids: string[] }, id: string) => ({ id })
     )
     const instance = startPixie(mappedPixie, () => {}, log)
 

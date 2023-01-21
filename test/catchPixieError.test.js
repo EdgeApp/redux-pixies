@@ -1,9 +1,11 @@
 // @flow
-import { catchPixieError } from '../src/redux-pixies.js'
-import { makeAssertLog } from './assertLog.js'
+
 import { describe, it } from 'mocha'
 
-function onOutput () {}
+import { catchPixieError } from '../src/redux-pixies.js'
+import { makeAssertLog } from './assertLog.js'
+
+function onOutput() {}
 
 describe('catchPixieError', function () {
   it('basic operation', function () {
@@ -11,11 +13,11 @@ describe('catchPixieError', function () {
     const onError = e => log(e.message)
 
     const testPixie = ({ onError }) => ({
-      update (props: {}) {
+      update(props: {}) {
         log('update')
         onError(new Error('update error'))
       },
-      destroy () {
+      destroy() {
         log('destroy')
         onError(new Error('destroy error'))
       }

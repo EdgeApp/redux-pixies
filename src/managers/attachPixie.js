@@ -1,7 +1,9 @@
 // @flow
-import type { OnError, OnOutput, WildPixie } from '../redux-pixies.js'
+
+import type { Dispatch, Store } from 'redux'
+
+import type { OnError, OnOutput, WildPixie } from '../types.js'
 import { startPixie } from './startPixie.js'
-import type { Store, Dispatch } from 'redux'
 
 export type ReduxProps<S, A> = {
   dispatch: Dispatch<A>,
@@ -12,7 +14,7 @@ export type ReduxProps<S, A> = {
 /**
  * Instantiates a pixie object and attaches it to a redux store.
  */
-export function attachPixie<S, A> (
+export function attachPixie<S, A>(
   store: Store<S, A>,
   pixie: WildPixie<ReduxProps<S, A>>,
   onError?: OnError,
@@ -21,14 +23,14 @@ export function attachPixie<S, A> (
   const instance = startPixie(pixie, onError, onOutput)
   instance.update({
     dispatch: store.dispatch,
-    output: void 0,
+    output: undefined,
     state: store.getState()
   })
 
   const unsubscribe = store.subscribe(() => {
     instance.update({
       dispatch: store.dispatch,
-      output: void 0,
+      output: undefined,
       state: store.getState()
     })
   })

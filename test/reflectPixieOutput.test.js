@@ -1,9 +1,11 @@
 // @flow
-import { reflectPixieOutput } from '../src/redux-pixies.js'
-import { makeAssertLog } from './assertLog.js'
+
 import { describe, it } from 'mocha'
 
-function onError () {}
+import { reflectPixieOutput } from '../src/redux-pixies.js'
+import { makeAssertLog } from './assertLog.js'
+
+function onError() {}
 
 describe('reflectPixieOutput', function () {
   it('output during creation', function () {
@@ -13,10 +15,10 @@ describe('reflectPixieOutput', function () {
     const testPixie = ({ onOutput }) => {
       onOutput(1)
       return {
-        update (props: {}) {
+        update(props: {}) {
           log('update ' + JSON.stringify(props))
         },
-        destroy () {
+        destroy() {
           log('destroy')
         }
       }
@@ -40,11 +42,11 @@ describe('reflectPixieOutput', function () {
 
     const testPixie = ({ onOutput }) => {
       return {
-        update (props: {}) {
+        update(props: {}) {
           log('update ' + JSON.stringify(props))
           onOutput(1)
         },
-        destroy () {
+        destroy() {
           log('destroy')
         }
       }
@@ -69,10 +71,10 @@ describe('reflectPixieOutput', function () {
 
     const testPixie = ({ onError, onOutput }) => {
       return {
-        update (props: {}) {
+        update(props: {}) {
           log('update ' + JSON.stringify(props))
         },
-        destroy () {
+        destroy() {
           log('destroy')
           onOutput(1)
         }
