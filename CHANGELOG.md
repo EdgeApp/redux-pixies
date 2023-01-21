@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.8 (2023-01-21)
+
+- fixed: Add back missing Flow type exports.
+
 ## 0.3.7 (2023-01-20)
 
 - added: Provide TypeScript type definitions.

@@ -1,6 +1,6 @@
 {
   "name": "redux-pixies",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "The magical asynchronous Redux library",
   "keywords": [
     "asynchronous",
