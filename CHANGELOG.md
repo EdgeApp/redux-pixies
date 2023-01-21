@@ -1,5 +1,9 @@
 # redux-pixies
 
+## 0.3.7 (2023-01-20)
+
+- added: Provide TypeScript type definitions.
+
 ## 0.3.6
 
 - Fix a bug where `mapPixies` wasn't removing the outputs for its destroyed children.
