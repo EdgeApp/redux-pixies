@@ -1,5 +1,7 @@
 // @flow
 
+export * from './types.js'
+
 // Pixie enhancers:
 export { catchPixieError } from './enhancers/catchPixieError.js'
 export { reflectPixieOutput } from './enhancers/reflectPixieOutput.js'
